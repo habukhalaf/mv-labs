@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Special Projects | Musa Virtual Labs</title>
+<meta name="description" content="Hands-on builds and cross-discipline experiments from Musa Virtual Labs: physical models and DIY fabrication that don't fit neatly into one category." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&amp;family=IBM+Plex+Mono:wght@500&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
+
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="atmosphere" aria-hidden="true">
+  <div class="atmosphere__grid"></div>
+  <div class="atmosphere__grain"></div>
+</div>
+
+<nav class="ruler" aria-label="Section navigation">
+  <ol>
+    <li><a href="3d-projects.html"><span class="ruler__tick"></span><span class="ruler__label">3D Projects</span></a></li>
+    <li><a href="2d-projects.html"><span class="ruler__tick"></span><span class="ruler__label">2D Projects</span></a></li>
+    <li><a href="media.html"><span class="ruler__tick"></span><span class="ruler__label">Media</span></a></li>
+    <li class="is-active"><a href="#top" data-section="top"><span class="ruler__tick"></span><span class="ruler__label">Special Projects</span></a></li>
+    <li><a href="about.html"><span class="ruler__tick"></span><span class="ruler__label">About Me</span></a></li>
+    <li><a href="contact.html"><span class="ruler__tick"></span><span class="ruler__label">Contact</span></a></li>
+  </ol>
+</nav>
+
+<header class="navbar" id="navbar">
+  <div class="container navbar__inner">
+    <a href="index.html" class="navbar__mark">
+      <img src="./assets/logo.png" alt="Musa Virtual Labs" class="navbar__mark-img" width="1018" height="302" />
+    </a>
+
+    <button type="button" id="nav-toggle" class="nav-toggle-btn" aria-expanded="false" aria-controls="site-menu" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+
+    <div class="navbar__menu" id="site-menu">
+      <ul class="navbar__links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="3d-projects.html">3D Projects</a></li>
+        <li><a href="2d-projects.html">2D Projects</a></li>
+        <li><a href="media.html">Media</a></li>
+        <li><a href="special-projects.html" aria-current="page">Special Projects</a></li>
+        <li><a href="about.html">About Me</a></li>
+      </ul>
+      <a href="contact.html" class="btn btn--primary btn--small chamfer">Contact / Start a project</a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- Horizontal "straightaway": pins and glides on desktop, native
+       swipe/scroll-snap on touch and reduced motion (script.js section 11). -->
+  <section class="drive drive--page" id="top" aria-labelledby="drive-title">
+    <div class="drive__pin">
+      <div class="container drive__head">
+        <div>
+          <p class="sector-label" data-decrypt>Builds</p>
+          <h1 class="drive__title" id="drive-title">Special Projects.</h1>
+          <p class="section-head__sub">Hands-on builds and cross-discipline experiments:
+          the projects that start as a bet with yourself and end up driveable.</p>
+        </div>
+      </div>
+
+      <div class="drive__viewport">
+        <ol class="drive__track">
+        <li class="drive__slide drive__slide--wide">
+          <a href="project.html?id=pvcPipeGoKart" class="project drive-card">
+            <div class="project__media">
+              <img src="./assets/pvc-pipe-go-kart.webp" alt="Electric off-road buggy hand-built from PVC pipe with roll cage, LED lighting, and battery pack" loading="lazy" width="1600" height="917" />
+            </div>
+            <div class="project__body">
+              <span class="drive-card__index" aria-hidden="true">01</span>
+              <span class="project__tag">Design &amp; Build</span>
+              <h3>EV DIY PVC Pipe Buggy</h3>
+              <div class="project__meta">
+                <span>2021</span><span class="meta-div"></span>
+                <span>Design &amp; Build · PVC Pipe</span>
+              </div>
+            </div>
+          </a>
+        </li>
+        <li class="drive__slide">
+          <a href="project.html?id=evTaxiClayModel" class="project drive-card">
+            <div class="project__media">
+              <img src="./assets/ev-taxi-clay-model.webp" alt="Hand-sculpted clay model of an EV taxi concept on a modelling buck" loading="lazy" width="1600" height="902" />
+            </div>
+            <div class="project__body">
+              <span class="drive-card__index" aria-hidden="true">02</span>
+              <span class="project__tag">Automotive · Clay Modelling</span>
+              <h3>EV Taxi Concept: Clay Model</h3>
+              <div class="project__meta">
+                <span>2011</span><span class="meta-div"></span>
+                <span>Germany</span>
+              </div>
+            </div>
+          </a>
+        </li>
+        <li class="drive__slide drive__slide--end">
+          <a href="contact.html" class="drive-end">
+            <span class="drive-end__label">More builds in progress</span>
+            <span class="drive-end__title">Follow the next build</span>
+            <span class="drive-end__arrow" aria-hidden="true">&rarr;</span>
+          </a>
+        </li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="contact" id="contact">
+  <div class="container">
+    <div class="contact__top reveal">
+      <h2>Let's build something.</h2>
+      <a href="mailto:musawork@gmail.com" class="contact__email">musawork@gmail.com</a>
+      <p class="contact__note">Currently taking on a limited number of automotive,
+        product, and visualization projects for late 2026.</p>
+    </div>
+
+    <div class="contact__grid">
+      <div class="contact__col">
+        <h4>Studio</h4>
+        <p>Based in Amman, Jordan<br />Working with clients worldwide</p>
+      </div>
+      <div class="contact__col">
+        <h4>Elsewhere</h4>
+        <ul class="contact__list">
+          <li><a href="https://www.linkedin.com/in/musa-abukhalaf/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+        </ul>
+      </div>
+      <div class="contact__col">
+        <h4>Direct</h4>
+        <ul class="contact__list">
+          <li><a href="mailto:musawork@gmail.com">musawork@gmail.com</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="contact__bottom">
+      <img src="./assets/logo.png" alt="Musa Virtual Labs" class="contact__mark-img" width="1018" height="302" />
+      <p>&copy; 2026 Musa Virtual Labs. All rights reserved.</p>
+      <a href="#top" class="contact__top-link">Back to top ↑</a>
+    </div>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

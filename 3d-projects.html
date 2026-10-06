@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>3D Projects | Musa Virtual Labs</title>
+<meta name="description" content="3D visualization and product design work from Musa Virtual Labs: automotive concepts, medical devices, and industrial products taken from sketch to render." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&amp;family=IBM+Plex+Mono:wght@500&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
+
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="atmosphere" aria-hidden="true">
+  <div class="atmosphere__grid"></div>
+  <div class="atmosphere__grain"></div>
+</div>
+
+<nav class="ruler" aria-label="Section navigation">
+  <ol>
+    <li class="is-active"><a href="#top" data-section="top"><span class="ruler__tick"></span><span class="ruler__label">3D Projects</span></a></li>
+    <li><a href="2d-projects.html"><span class="ruler__tick"></span><span class="ruler__label">2D Projects</span></a></li>
+    <li><a href="media.html"><span class="ruler__tick"></span><span class="ruler__label">Media</span></a></li>
+    <li><a href="special-projects.html"><span class="ruler__tick"></span><span class="ruler__label">Special Projects</span></a></li>
+    <li><a href="about.html"><span class="ruler__tick"></span><span class="ruler__label">About Me</span></a></li>
+    <li><a href="contact.html"><span class="ruler__tick"></span><span class="ruler__label">Contact</span></a></li>
+  </ol>
+</nav>
+
+<header class="navbar" id="navbar">
+  <div class="container navbar__inner">
+    <a href="index.html" class="navbar__mark">
+      <img src="./assets/logo.png" alt="Musa Virtual Labs" class="navbar__mark-img" width="1018" height="302" />
+    </a>
+
+    <button type="button" id="nav-toggle" class="nav-toggle-btn" aria-expanded="false" aria-controls="site-menu" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+
+    <div class="navbar__menu" id="site-menu">
+      <ul class="navbar__links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="3d-projects.html" aria-current="page">3D Projects</a></li>
+        <li><a href="2d-projects.html">2D Projects</a></li>
+        <li><a href="media.html">Media</a></li>
+        <li><a href="special-projects.html">Special Projects</a></li>
+        <li><a href="about.html">About Me</a></li>
+      </ul>
+      <a href="contact.html" class="btn btn--primary btn--small chamfer">Contact / Start a project</a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- Horizontal "straightaway" of the 3D work: pins and glides on
+       desktop, native swipe/scroll-snap on touch and reduced motion
+       (script.js section 11). -->
+  <section class="drive drive--page" id="top" aria-labelledby="drive-title">
+    <div class="drive__pin">
+      <div class="container drive__head">
+        <div>
+          <p class="sector-label" data-decrypt>Renders and CAD</p>
+          <h1 class="drive__title" id="drive-title">3D Projects.</h1>
+          <p class="section-head__sub">Concept visualization, product design, and CAD surfacing:
+          automotive, medical, and industrial work built and rendered before it's ever cut.</p>
+        </div>
+      </div>
+
+      <div class="drive__viewport">
+        <ol class="drive__track" data-category="3D Projects">
+        <li class="drive__slide drive__slide--wide">
+          <a href="project.html?id=vwGolfCompetition" class="project drive-card">
+            <div class="project__media">
+              <img src="./assets/vw-golf-competition.webp" alt="Six styled Volkswagen Golf GTI concepts lined up for the Style Up Your Golf design competition" loading="lazy" width="1600" height="900" />
+            </div>
+            <div class="project__body">
+              <span class="drive-card__index" aria-hidden="true">01</span>
+              <span class="project__tag">Automotive</span>
+              <h3>Style Up Your Golf: Competition Winner</h3>
+              <div class="project__meta">
+                <span>2009</span><span class="meta-div"></span>
+                <span>3D Visualization</span><span class="meta-div"></span>
+                <span>1st Place, Amman</span>
+              </div>
+            </div>
+          </a>
+        </li>
+        <li class="drive__slide">
+          <a href="project.html?id=formulaStudent" class="project drive-card">
+            <div class="project__media">
+              <img src="./assets/formula-student-design.webp" alt="Blue Formula Student open-wheel race car concept for JUST Racing" loading="lazy" width="1600" height="901" />
+            </div>
+            <div class="project__body">
+              <span class="drive-card__index" aria-hidden="true">02</span>
+              <span class="project__tag">Automotive</span>
+              <h3>Formula Student: JUST Racing</h3>
+              <div class="project__meta">
+                <span>2010</span><span class="meta-div"></span>
+                <span>Jordan</span>
+              </div>
+            </div>
+          </a>
+        </li>
+        <li class="drive__slide">
+          <a href="project.html?id=daggerDesign" class="project drive-card">
+            <div class="project__media">
+              <img src="./assets/dagger-design.webp" alt="Ornamental ceremonial dagger with engraved handle and damascened blade, shown with its sheath" loading="lazy" width="1600" height="899" />
+            </div>
+            <div class="project__body">
+              <span class="drive-card__index" aria-hidden="true">03</span>
+              <span class="project__tag">Product Design</span>
+              <h3>Ceremonial Dagger Design</h3>
+              <div class="project__meta">
+                <span>3D Visualization</span>
+              </div>
+            </div>
+          </a>
+        </li>
+        <li class="drive__slide">
+          <a href="project.html?id=mduCovid19" class="project drive-card">
+            <div class="project__media">
+              <img src="./assets/mdu-covid19.webp" alt="Mobile Decontamination Unit product visualization branded Be Safe, for vehicle and pedestrian sterilization" loading="lazy" width="1600" height="899" />
+            </div>
+            <div class="project__body">
+              <span class="drive-card__index" aria-hidden="true">04</span>
+              <span class="project__tag">Industrial Design</span>
+              <h3>MDU: Mobile Decontamination Unit</h3>
+              <div class="project__meta">
+                <span>3D Visualization</span><span class="meta-div"></span>
+                <span>Fodeh &amp; Partner</span>
+              </div>
+            </div>
+          </a>
+        </li>
+        <li class="drive__slide">
+          <a href="project.html?id=covidVentilation" class="project drive-card">
+            <div class="project__media">
+              <img src="./assets/ventilation-covid19-a.webp" alt="Compact ventilator machine concept with vital-signs display, designed for COVID-19 response" loading="lazy" width="1600" height="900" />
+            </div>
+            <div class="project__body">
+              <span class="drive-card__index" aria-hidden="true">05</span>
+              <span class="project__tag">Industrial Design</span>
+              <h3>Ventilator Machine: Studio Unit</h3>
+              <div class="project__meta">
+                <span>3D Visualization</span>
+              </div>
+            </div>
+          </a>
+        </li>
+        <li class="drive__slide">
+          <a href="project.html?id=ventilatorFieldFrame" class="project drive-card">
+            <div class="project__media">
+              <img src="./assets/ventilation-covid19-b.webp" alt="Modular tank-frame ventilator machine concept designed for COVID-19 response" loading="lazy" width="1600" height="898" />
+            </div>
+            <div class="project__body">
+              <span class="drive-card__index" aria-hidden="true">06</span>
+              <span class="project__tag">Industrial Design</span>
+              <h3>Ventilator Machine: Field Frame</h3>
+              <div class="project__meta">
+                <span>3D Visualization</span>
+              </div>
+            </div>
+          </a>
+        </li>
+        <li class="drive__slide">
+          <a href="project.html?id=rollskiDesign" class="project drive-card">
+            <div class="project__media">
+              <img src="./assets/rollski-design.webp" alt="Red and green RollSki product design, a set of off-snow ski trainers with wheeled tips" loading="lazy" width="1600" height="900" />
+            </div>
+            <div class="project__body">
+              <span class="drive-card__index" aria-hidden="true">07</span>
+              <span class="project__tag">Product Design</span>
+              <h3>RollSki Design</h3>
+              <div class="project__meta">
+                <span>2011</span><span class="meta-div"></span>
+                <span>Germany</span>
+              </div>
+            </div>
+          </a>
+        </li>
+        <li class="drive__slide">
+          <a href="project.html?id=cableBoxDesign" class="project drive-card">
+            <div class="project__media">
+              <img src="./assets/cable-box-design.webp" alt="Yellow industrial cable reel box product design with integrated handle and control panel" loading="lazy" width="1600" height="900" />
+            </div>
+            <div class="project__body">
+              <span class="drive-card__index" aria-hidden="true">08</span>
+              <span class="project__tag">Product Design</span>
+              <h3>Cable Box</h3>
+              <div class="project__meta">
+                <span>2011</span><span class="meta-div"></span>
+                <span>Germany</span>
+              </div>
+            </div>
+          </a>
+        </li>
+        <li class="drive__slide">
+          <a href="project.html?id=filmEquipmentRickshaw" class="project drive-card">
+            <div class="project__media">
+              <img src="./assets/film-equipment-rickshaw.webp" alt="Bicycle-towed rickshaw seat and equipment platform for film production" loading="lazy" width="1600" height="900" />
+            </div>
+            <div class="project__body">
+              <span class="drive-card__index" aria-hidden="true">09</span>
+              <span class="project__tag">Product Design</span>
+              <h3>Film Equipment Rickshaw</h3>
+              <div class="project__meta">
+                <span>2016</span><span class="meta-div"></span>
+                <span>Design &amp; Manufacturing, Jordan</span>
+              </div>
+            </div>
+          </a>
+        </li>
+        <li class="drive__slide">
+          <a href="project.html?id=penDesign" class="project drive-card">
+            <div class="project__media">
+              <img src="./assets/3d-pen-design.webp" alt="Gold and silver segmented pen design product visualization" loading="lazy" width="1600" height="900" />
+            </div>
+            <div class="project__body">
+              <span class="drive-card__index" aria-hidden="true">10</span>
+              <span class="project__tag">Product Design</span>
+              <h3>Pen Design</h3>
+              <div class="project__meta">
+                <span>2011</span><span class="meta-div"></span>
+                <span>Germany</span>
+              </div>
+            </div>
+          </a>
+        </li>
+        <li class="drive__slide">
+          <a href="project.html?id=architectureDesign" class="project drive-card">
+            <div class="project__media">
+              <img src="./assets/architecture-design.webp" alt="Architectural visualization of a modular building built from stacked shipping containers" loading="lazy" width="1600" height="900" />
+            </div>
+            <div class="project__body">
+              <span class="drive-card__index" aria-hidden="true">11</span>
+              <span class="project__tag">Architecture</span>
+              <h3>Architectural Visualization</h3>
+              <div class="project__meta">
+                <span>3D Visualization</span>
+              </div>
+            </div>
+          </a>
+        </li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="contact" id="contact">
+  <div class="container">
+    <div class="contact__top reveal">
+      <h2>Let's build something.</h2>
+      <a href="mailto:musawork@gmail.com" class="contact__email">musawork@gmail.com</a>
+      <p class="contact__note">Currently taking on a limited number of automotive,
+        product, and visualization projects for late 2026.</p>
+    </div>
+
+    <div class="contact__grid">
+      <div class="contact__col">
+        <h4>Studio</h4>
+        <p>Based in Amman, Jordan<br />Working with clients worldwide</p>
+      </div>
+      <div class="contact__col">
+        <h4>Elsewhere</h4>
+        <ul class="contact__list">
+          <li><a href="https://www.linkedin.com/in/musa-abukhalaf/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+        </ul>
+      </div>
+      <div class="contact__col">
+        <h4>Direct</h4>
+        <ul class="contact__list">
+          <li><a href="mailto:musawork@gmail.com">musawork@gmail.com</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="contact__bottom">
+      <img src="./assets/logo.png" alt="Musa Virtual Labs" class="contact__mark-img" width="1018" height="302" />
+      <p>&copy; 2026 Musa Virtual Labs. All rights reserved.</p>
+      <a href="#top" class="contact__top-link">Back to top ↑</a>
+    </div>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

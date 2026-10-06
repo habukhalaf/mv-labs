@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Project | Musa Virtual Labs</title>
+<meta name="description" content="Project detail, Musa Virtual Labs." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&amp;family=IBM+Plex+Mono:wght@500;700&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
+
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body class="page-project">
+
+<!--
+  MASTER PROJECT TEMPLATE - do not duplicate this file.
+  Content is injected at runtime by the "Project detail loader" in script.js,
+  reading PROJECTS[ url ?id= ] and filling in the elements below by id.
+  To add a project: add an entry to PROJECTS in script.js, then link to it
+  with <a href="project.html?id=yourKey">.
+-->
+
+<div class="atmosphere" aria-hidden="true">
+  <div class="atmosphere__grid"></div>
+  <div class="atmosphere__grain"></div>
+</div>
+
+<nav class="ruler" aria-label="Section navigation">
+  <ol>
+    <li><a href="3d-projects.html"><span class="ruler__tick"></span><span class="ruler__label">3D Projects</span></a></li>
+    <li><a href="2d-projects.html"><span class="ruler__tick"></span><span class="ruler__label">2D Projects</span></a></li>
+    <li><a href="media.html"><span class="ruler__tick"></span><span class="ruler__label">Media</span></a></li>
+    <li><a href="special-projects.html"><span class="ruler__tick"></span><span class="ruler__label">Special Projects</span></a></li>
+    <li><a href="about.html"><span class="ruler__tick"></span><span class="ruler__label">About Me</span></a></li>
+    <li><a href="contact.html"><span class="ruler__tick"></span><span class="ruler__label">Contact</span></a></li>
+  </ol>
+</nav>
+
+<header class="navbar" id="navbar">
+  <div class="container navbar__inner">
+    <a href="index.html" class="navbar__mark">
+      <img src="./assets/logo.png" alt="Musa Virtual Labs" class="navbar__mark-img" width="1018" height="302" />
+    </a>
+
+    <button type="button" id="nav-toggle" class="nav-toggle-btn" aria-expanded="false" aria-controls="site-menu" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+
+    <div class="navbar__menu" id="site-menu">
+      <ul class="navbar__links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="3d-projects.html">3D Projects</a></li>
+        <li><a href="2d-projects.html">2D Projects</a></li>
+        <li><a href="media.html">Media</a></li>
+        <li><a href="special-projects.html">Special Projects</a></li>
+        <li><a href="about.html">About Me</a></li>
+      </ul>
+      <a href="contact.html" class="btn btn--primary btn--small chamfer">Contact / Start a project</a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- ============ PROJECT HERO ============
+       Massive, blocky project title overlapping the mixed-media-filter hero
+       image - same cinematic treatment as the index.html home hero. The
+       title, back link, and category tag all live inside ONE .container
+       (.hero__title-group), so they share the exact same left edge instead
+       of the title's own full-bleed gutter drifting out of alignment with
+       a separately-centered content box. Populated at runtime by the
+       project loader in script.js (see PROJECTS[id].title/.category). -->
+  <section class="hero hero--project" id="top">
+    <div class="hero__backdrop mixed-media-filter" aria-hidden="true">
+      <img id="project-main-image" class="hero__bg-image" src="" alt="" loading="eager" />
+      <div id="project-main-image-placeholder" class="media-placeholder" hidden></div>
+      <div class="hero__scrim"></div>
+    </div>
+
+    <div class="container hero__title-group">
+      <div class="hero__title-block">
+        <span class="telemetry-tag reveal-on-load" id="telemetry-hero" style="animation-delay:0.05s;" aria-hidden="true"></span>
+        <h1 id="hero-project-title" class="hero-project-title reveal-on-load" style="animation-delay:0.15s;"></h1>
+      </div>
+
+      <div class="hero__content--below-title">
+        <a id="project-back-link" href="index.html" class="btn btn--ghost btn--small chamfer reveal-on-load" style="animation-delay:0.4s;">&larr; Back</a>
+        <div class="reveal-on-load" style="animation-delay:0.4s;">
+          <span id="project-category" class="project__tag"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PROJECT STORYBOARD ============
+       Two-column layout: the left column holds the lede, meta strip, and
+       the unfiltered full render; the right column holds two detail-shot
+       crops. Populated at runtime by the project loader in script.js
+       (see PROJECTS[id].description / .mainImage). -->
+  <section id="overview">
+    <div class="container">
+
+      <div class="overview__top">
+
+        <div class="storyboard__text reveal-left">
+          <h2 id="project-title" class="hero__headline" style="font-size:clamp(2.4rem, 4.6vw, 4rem); margin-bottom:28px;"></h2>
+          <div id="project-lede" class="storyboard__text-body"></div>
+
+          <div id="project-meta-panel" class="storyboard__meta-strip">
+            <div class="storyboard__meta-item">
+              <h4>Year</h4>
+              <p id="project-year"></p>
+            </div>
+            <div class="storyboard__meta-item">
+              <h4>Client</h4>
+              <p id="project-client"></p>
+            </div>
+            <div class="storyboard__meta-item">
+              <h4>Role</h4>
+              <p id="project-role"></p>
+            </div>
+            <div class="storyboard__meta-item">
+              <h4>Tools &amp; Tech</h4>
+              <div id="project-tools" class="storyboard__tools"></div>
+            </div>
+          </div>
+
+          <!-- ============ FULL UNFILTERED RENDER ============
+               The project's mainImage again, but plain - no .mixed-media-filter
+               wrapper, no duotone/halftone overlay - so there's always one
+               unobstructed, true-color view of the actual render/photo.
+               Sits under the meta strip to fill out the left column opposite
+               the detail-shot stack. Populated at runtime by script.js (see
+               PROJECTS[id].mainImage); hidden entirely for projects with no
+               image yet. -->
+          <div id="project-full-render" class="project-full-render" hidden></div>
+
+          <!-- Telemetry readouts anchoring the bottom corners of the text
+               column - populated at runtime by script.js. -->
+          <span class="telemetry-tag telemetry-tag--corner-left" id="telemetry-corner-left" aria-hidden="true"></span>
+          <span class="telemetry-tag telemetry-tag--corner-right" id="telemetry-corner-right" aria-hidden="true"></span>
+        </div>
+
+        <!-- ============ DETAIL SHOTS ============
+             Distinct extra photos from PROJECTS[id].galleryImages, one
+             framed, clickable photo each (opens the lightbox). The single
+             frame below is a template that script.js clones per photo.
+             Projects with only a mainImage get no detail column: script.js
+             removes this element and widens the overview to one column. -->
+        <div class="project-details" id="project-detail-shots">
+          <div class="project-details__frame chamfer reveal-right" style="--delay:0ms" data-index="01">
+            <div class="image-zoom-crop">
+              <img class="project-detail-img" src="" alt="" loading="lazy" />
+            </div>
+            <span class="telemetry-tag telemetry-tag--detail" aria-hidden="true"></span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ============ PREV / NEXT ============
+           Links to the adjacent entries in PROJECTS (database order, looping
+           at both ends). Filled in at runtime by script.js; stays hidden on
+           the "Project Not Found" state. -->
+      <nav id="project-pager" class="project-pager" aria-label="More projects" hidden>
+        <a id="project-pager-prev" class="project-pager__link project-pager__link--prev" href="#"></a>
+        <a id="project-pager-next" class="project-pager__link project-pager__link--next" href="#"></a>
+      </nav>
+
+    </div>
+  </section>
+
+</main>
+
+<footer class="contact" id="contact">
+  <div class="container">
+    <div class="contact__top reveal">
+      <h2>Let's build something.</h2>
+      <a href="mailto:musawork@gmail.com" class="contact__email">musawork@gmail.com</a>
+      <p class="contact__note">Currently taking on a limited number of automotive,
+        product, and visualization projects for late 2026.</p>
+    </div>
+
+    <div class="contact__grid">
+      <div class="contact__col">
+        <h4>Studio</h4>
+        <p>Based in Amman, Jordan<br />Working with clients worldwide</p>
+      </div>
+      <div class="contact__col">
+        <h4>Elsewhere</h4>
+        <ul class="contact__list">
+          <li><a href="https://www.linkedin.com/in/musa-abukhalaf/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+        </ul>
+      </div>
+      <div class="contact__col">
+        <h4>Direct</h4>
+        <ul class="contact__list">
+          <li><a href="mailto:musawork@gmail.com">musawork@gmail.com</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="contact__bottom">
+      <img src="./assets/logo.png" alt="Musa Virtual Labs" class="contact__mark-img" width="1018" height="302" />
+      <p>&copy; 2026 Musa Virtual Labs. All rights reserved.</p>
+      <a href="#top" class="contact__top-link">Back to top ↑</a>
+    </div>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

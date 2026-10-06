@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Musa Virtual Labs | 3D Design, Product &amp; Automotive Visualization</title>
+<meta name="description" content="Musa Virtual Labs is a multi-disciplinary design practice spanning 3D visualization, product design, automotive concepts, and hands-on fabrication." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
+
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body class="page-home">
+
+<!-- Fixed atmosphere layers: grid, grain, scanlines sit behind everything -->
+<div class="atmosphere" aria-hidden="true">
+  <div class="atmosphere__grid"></div>
+  <div class="atmosphere__grain"></div>
+</div>
+
+<!-- Section ruler / scrollspy for this page's own sectors, desktop only -->
+<nav class="ruler" aria-label="Page sections">
+  <ol>
+    <li><a href="#top" data-section="top"><span class="ruler__tick"></span><span class="ruler__label">00 Start</span></a></li>
+    <li><a href="#practice" data-section="practice"><span class="ruler__tick"></span><span class="ruler__label">01 Practice</span></a></li>
+    <li><a href="#work" data-section="work"><span class="ruler__tick"></span><span class="ruler__label">02 Work</span></a></li>
+    <li><a href="#contact" data-section="contact"><span class="ruler__tick"></span><span class="ruler__label">03 Contact</span></a></li>
+  </ol>
+</nav>
+
+<!-- ============ NAVBAR ============ -->
+<header class="navbar" id="navbar">
+  <div class="container navbar__inner">
+    <a href="#top" class="navbar__mark">
+      <img src="./assets/logo.png" alt="Musa Virtual Labs" class="navbar__mark-img" width="1018" height="302" />
+    </a>
+
+    <button type="button" id="nav-toggle" class="nav-toggle-btn" aria-expanded="false" aria-controls="site-menu" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+
+    <div class="navbar__menu" id="site-menu">
+      <ul class="navbar__links">
+        <li><a href="#top" aria-current="page">Home</a></li>
+        <li><a href="3d-projects.html">3D Projects</a></li>
+        <li><a href="2d-projects.html">2D Projects</a></li>
+        <li><a href="media.html">Media</a></li>
+        <li><a href="special-projects.html">Special Projects</a></li>
+        <li><a href="about.html">About Me</a></li>
+      </ul>
+      <a href="contact.html" class="btn btn--primary btn--small chamfer">Contact / Start a project</a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero hero--blueprint" id="top">
+    <div class="hero__backdrop" aria-hidden="true">
+      <img
+        class="hero__bg-image"
+        src="./assets/vw-golf-competition.webp"
+        alt=""
+        loading="eager" width="1600" height="900"
+      />
+      <div class="hero__scrim"></div>
+    </div>
+
+    <!-- CAD registration marks at the frame corners -->
+    <span class="reg-mark reg-mark--tl" aria-hidden="true"></span>
+    <span class="reg-mark reg-mark--tr" aria-hidden="true"></span>
+    <span class="reg-mark reg-mark--bl" aria-hidden="true"></span>
+    <span class="reg-mark reg-mark--br" aria-hidden="true"></span>
+
+    <div class="container hero__content">
+      <div class="hud-row" aria-hidden="true">
+        <span data-decrypt>31.9539&deg; N &middot; 35.9106&deg; E</span>
+        <span>Amman <span class="hud-clock" id="hud-clock">--:--:--</span></span>
+      </div>
+
+      <h1 class="hero__headline hero__headline--mega">
+        <span class="line-wrap"><span class="line">Design that's</span></span>
+        <span class="line-wrap"><span class="line">tested, machined,</span></span>
+        <span class="line-wrap"><span class="line">and <span class="hero__accent">driven.</span></span></span>
+      </h1>
+
+      <div class="hero__foot">
+        <p class="hero__sub reveal-on-load">
+          A multi-disciplinary practice spanning automotive design, product development,
+          and physical fabrication, where every idea gets built, not just rendered.
+        </p>
+
+        <dl class="hud-table reveal-on-load">
+          <div><dt>Disciplines</dt><dd data-decrypt>03</dd></div>
+          <div><dt>Project files</dt><dd data-decrypt data-project-count>25</dd></div>
+          <div><dt>Base</dt><dd data-decrypt>Amman, JO</dd></div>
+          <div><dt>Status</dt><dd data-decrypt class="hud-table__live">Booking late 2026</dd></div>
+        </dl>
+
+        <div class="hero__actions reveal-on-load">
+          <a href="#work" class="btn btn--primary chamfer">View the work</a>
+          <a href="contact.html" class="btn btn--ghost chamfer">Get in touch</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero__fig container" aria-hidden="true">
+      <span class="dim-line"></span>
+      <span class="hero__fig-label" data-decrypt>Fig. 01 · Style Up Your Golf · 1st place, 2009</span>
+    </div>
+
+    <a href="#practice" class="hero__scroll-cue" aria-label="Scroll to next section">
+      <span></span>
+    </a>
+  </section>
+
+  <!-- ============ PRACTICE / EXPERTISE ============ -->
+  <section class="practice" id="practice">
+    <div class="container">
+      <div class="section-head reveal">
+        <p class="sector-label" data-decrypt>01 Practice</p>
+        <h2>Three disciplines, one process.</h2>
+        <p class="section-head__sub">
+          Every project moves through the same loop (sketch, surface, test, build),
+          whether it ends up on the road, on a shelf, or in someone's hand.
+        </p>
+      </div>
+
+      <div class="practice__grid">
+
+        <article class="practice-card chamfer reveal" style="--delay:0ms">
+          <div class="practice-card__bg" aria-hidden="true">
+            <img src="./assets/vw-golf-competition.webp" alt="" loading="lazy" width="1600" height="900" />
+          </div>
+          <div class="practice-card__body">
+            <span class="practice-card__index" aria-hidden="true" data-decrypt>01</span>
+            <svg class="practice-card__icon" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+              <circle cx="24" cy="24" r="15" />
+              <circle cx="24" cy="24" r="5.5" />
+              <path d="M24 3 V9 M24 39 V45 M45 24 H39 M9 24 H3 M38 10 L34 14 M14 34 L10 38 M38 38 L34 34 M14 14 L10 10" />
+            </svg>
+            <h3>Automotive</h3>
+            <p>Sketching, surfacing, and clay modelling for concept and low-volume
+              production vehicles, carrying a line from a 2D sketch to a full-size
+              buck without losing its intent.</p>
+          </div>
+        </article>
+
+        <article class="practice-card chamfer reveal" style="--delay:120ms">
+          <div class="practice-card__bg" aria-hidden="true">
+            <img src="./assets/architecture-design.webp" alt="" loading="lazy" width="1600" height="900" />
+          </div>
+          <div class="practice-card__body">
+            <span class="practice-card__index" aria-hidden="true" data-decrypt>02</span>
+            <svg class="practice-card__icon" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+              <path d="M8 40 L8 32 L30 10 L38 18 L16 40 Z" />
+              <path d="M27 13 L35 21" />
+              <path d="M8 40 L14 40" />
+            </svg>
+            <h3>Design</h3>
+            <p>Visual identity, packaging, and product graphics: the language a
+              product speaks before anyone has picked it up or turned the key.</p>
+          </div>
+        </article>
+
+        <article class="practice-card chamfer reveal" style="--delay:240ms">
+          <div class="practice-card__bg" aria-hidden="true">
+            <img src="./assets/mdu-covid19.webp" alt="" loading="lazy" width="1600" height="899" />
+          </div>
+          <div class="practice-card__body">
+            <span class="practice-card__index" aria-hidden="true" data-decrypt>03</span>
+            <svg class="practice-card__icon" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+              <path d="M24 5 L42 15 V33 L24 43 L6 33 V15 Z" />
+              <path d="M24 5 V23 M24 23 L42 15 M24 23 L6 15 M24 23 V43" />
+            </svg>
+            <h3>Product Making</h3>
+            <p>Prototyping, CNC machining, and small-batch fabrication, where a
+              concept stops being a render and becomes something with weight and
+              tolerance.</p>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WORK - GALLERY GRID ============ -->
+  <!-- A horizontal "straightaway": on desktop the section pins and vertical
+       scroll glides the track sideways (script.js section 11); on touch
+       screens and with reduced motion it is a native swipe/scroll-snap row. -->
+  <section class="drive" id="work" aria-labelledby="drive-title">
+    <div class="drive__pin">
+      <div class="container drive__head">
+        <div>
+          <p class="sector-label" data-decrypt>02 Selected work</p>
+          <h2 class="drive__title" id="drive-title">Selected work.</h2>
+        </div>
+      </div>
+
+      <div class="drive__viewport">
+        <ol class="drive__track">
+        <li class="drive__slide drive__slide--wide">
+          <a href="project.html?id=vwGolfCompetition" class="project drive-card">
+            <div class="project__media">
+              <img src="./assets/vw-golf-competition.webp" alt="Six styled Volkswagen Golf GTI concepts lined up for the Style Up Your Golf design competition" loading="eager" width="1600" height="900" />
+            </div>
+            <div class="project__body">
+              <span class="drive-card__index" aria-hidden="true">01</span>
+              <span class="project__tag">Automotive</span>
+              <h3>Style Up Your Golf</h3>
+              <div class="project__meta"><span>2009</span><span class="meta-div"></span><span>1st Place, Amman</span></div>
+            </div>
+          </a>
+        </li>
+        <li class="drive__slide">
+          <a href="project.html?id=mduCovid19" class="project drive-card">
+            <div class="project__media">
+              <img src="./assets/mdu-covid19.webp" alt="Mobile Decontamination Unit product visualization branded Be Safe" loading="eager" width="1600" height="899" />
+            </div>
+            <div class="project__body">
+              <span class="drive-card__index" aria-hidden="true">02</span>
+              <span class="project__tag">Industrial Design</span>
+              <h3>MDU Mobile Decontamination Unit</h3>
+              <div class="project__meta"><span>2020</span><span class="meta-div"></span><span>Fodeh &amp; Partner</span></div>
+            </div>
+          </a>
+        </li>
+        <li class="drive__slide">
+          <a href="project.html?id=pvcPipeGoKart" class="project drive-card">
+            <div class="project__media">
+              <img src="./assets/pvc-pipe-go-kart.webp" alt="Electric off-road buggy hand-built from PVC pipe with roll cage and LED lighting" loading="lazy" width="1600" height="917" />
+            </div>
+            <div class="project__body">
+              <span class="drive-card__index" aria-hidden="true">03</span>
+              <span class="project__tag">Design &amp; Build</span>
+              <h3>EV DIY PVC Pipe Buggy</h3>
+              <div class="project__meta"><span>2021</span><span class="meta-div"></span><span>Independent R&amp;D</span></div>
+            </div>
+          </a>
+        </li>
+        <li class="drive__slide drive__slide--wide">
+          <a href="project.html?id=formulaStudent" class="project drive-card">
+            <div class="project__media">
+              <img src="./assets/formula-student-design.webp" alt="Blue Formula Student open-wheel race car concept for JUST Racing" loading="lazy" width="1600" height="901" />
+            </div>
+            <div class="project__body">
+              <span class="drive-card__index" aria-hidden="true">04</span>
+              <span class="project__tag">Automotive</span>
+              <h3>Formula Student JUST Racing</h3>
+              <div class="project__meta"><span>2010</span><span class="meta-div"></span><span>JUST Racing</span></div>
+            </div>
+          </a>
+        </li>
+        <li class="drive__slide">
+          <a href="project.html?id=evTaxiClayModel" class="project drive-card">
+            <div class="project__media">
+              <img src="./assets/ev-taxi-clay-model.webp" alt="Clay model of an electric taxi concept" loading="lazy" width="1600" height="902" />
+            </div>
+            <div class="project__body">
+              <span class="drive-card__index" aria-hidden="true">05</span>
+              <span class="project__tag">Automotive</span>
+              <h3>EV Taxi Concept Clay Model</h3>
+              <div class="project__meta"><span>2011</span><span class="meta-div"></span><span>Design Studio, Germany</span></div>
+            </div>
+          </a>
+        </li>
+        <li class="drive__slide">
+          <a href="project.html?id=daggerDesign" class="project drive-card">
+            <div class="project__media">
+              <img src="./assets/dagger-design.webp" alt="Ornamental ceremonial dagger with engraved handle and damascened blade, shown with its sheath" loading="lazy" width="1600" height="899" />
+            </div>
+            <div class="project__body">
+              <span class="drive-card__index" aria-hidden="true">06</span>
+              <span class="project__tag">Product Design</span>
+              <h3>Ceremonial Dagger Design</h3>
+              <div class="project__meta"><span>Concept Project</span></div>
+            </div>
+          </a>
+        </li>
+        <li class="drive__slide">
+          <a href="project.html?id=filmEquipmentRickshaw" class="project drive-card">
+            <div class="project__media">
+              <img src="./assets/film-equipment-rickshaw.webp" alt="Rickshaw-style vehicle designed to carry film production equipment" loading="lazy" width="1600" height="900" />
+            </div>
+            <div class="project__body">
+              <span class="drive-card__index" aria-hidden="true">07</span>
+              <span class="project__tag">Product Design</span>
+              <h3>Film Equipment Rickshaw</h3>
+              <div class="project__meta"><span>2016</span><span class="meta-div"></span><span>Jordan</span></div>
+            </div>
+          </a>
+        </li>
+        <li class="drive__slide drive__slide--end">
+          <a href="3d-projects.html" class="drive-end">
+            <span class="drive-end__label">Archive</span>
+            <span class="drive-end__title">All 3D projects</span>
+            <span class="drive-end__arrow" aria-hidden="true">&rarr;</span>
+          </a>
+        </li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONTACT / FOOTER ============ -->
+  <footer class="contact" id="contact">
+    <div class="container">
+      <div class="contact__top reveal">
+        <p class="sector-label" data-decrypt>03 Contact</p>
+        <h2 class="section-head__mega">Let's build something.</h2>
+        <a href="mailto:musawork@gmail.com" class="contact__email" data-magnetic>musawork@gmail.com</a>
+        <p class="contact__note">Currently taking on a limited number of automotive,
+          product, and visualization projects for late 2026.</p>
+      </div>
+
+      <div class="contact__grid">
+        <div class="contact__col">
+          <h4>Studio</h4>
+          <p>Based in Amman, Jordan<br />Working with clients worldwide</p>
+        </div>
+        <div class="contact__col">
+          <h4>Elsewhere</h4>
+          <ul class="contact__list">
+            <li><a href="https://www.linkedin.com/in/musa-abukhalaf/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+          </ul>
+        </div>
+        <div class="contact__col">
+          <h4>Direct</h4>
+          <ul class="contact__list">
+            <li><a href="mailto:musawork@gmail.com">musawork@gmail.com</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="contact__bottom">
+        <img src="./assets/logo.png" alt="Musa Virtual Labs" class="contact__mark-img" width="1018" height="302" />
+        <p>&copy; 2026 Musa Virtual Labs. All rights reserved.</p>
+        <a href="#top" class="contact__top-link">Back to top ↑</a>
+      </div>
+    </div>
+  </footer>
+
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

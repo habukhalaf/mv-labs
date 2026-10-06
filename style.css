@@ -1,0 +1,2815 @@
+/* Title face for headings and project titles (section 33). Loaded here so
+   every page gets it without per-page <link> edits. */
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&display=swap');
+
+/* ==========================================================================
+   GAUGE — portfolio stylesheet
+   Table of contents:
+   1.  Reset & base
+   2.  Design tokens
+   3.  Typography
+   4.  Layout utilities
+   5.  Atmosphere (grid + grain)
+   6.  Chamfer utility (signature cut-corner motif)
+   7.  Scroll reveal system
+   8.  Section ruler (scrollspy)
+   9.  Navbar
+   10. Buttons
+   11. Hero
+   12. Practice / expertise section
+   13. Work / portfolio grid
+   14. Contact / footer
+   15. Responsive
+   16. Reduced motion & accessibility
+   ========================================================================== */
+
+
+/* 1. RESET & BASE ---------------------------------------------------------- */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  /* Clears the sticky navbar at its tallest (about 99px unscrolled), so
+     anchor targets and keyboard focus never land underneath it. */
+  scroll-padding-top: 112px;
+}
+
+body, h1, h2, h3, h4, p, figure, ul, ol {
+  margin: 0;
+}
+
+ul, ol { padding: 0; list-style: none; }
+
+/* height: auto so the width/height attributes on each <img> only reserve
+   the aspect ratio (no layout shift while loading) and never stretch it. */
+img { max-width: 100%; height: auto; display: block; }
+
+a { color: inherit; text-decoration: none; }
+
+button, input { font: inherit; color: inherit; }
+
+svg { display: block; }
+
+
+/* 2. DESIGN TOKENS ---------------------------------------------------------- */
+
+:root {
+  /* ink / surfaces */
+  --ink-950: #121315;
+  --ink-900: #1a1c1f;
+  --ink-800: #212428;
+  --ink-700: #2b2f34;
+
+  /* structure */
+  --line: #34383d;
+  --line-soft: #24272b;
+
+  /* text */
+  --paper: #ece9e2;
+  --steel: #9ba3aa;
+  --steel-dim: #838a91;
+
+  /* accent */
+  --maroon: #eb1c24;
+  --blue: #3055e8;
+  --navy-deep: #0b132b;
+
+  /* accent text — lighter tints of the accents for text on the dark
+     surfaces (--blue / --maroon only reach ~3–4:1 there; these clear
+     WCAG AA 4.5:1 on ink-950 through ink-800). Use the base accents for
+     fills, borders, and lines; use these whenever the accent is text. */
+  --blue-text: #7b95ff;
+  --red-text: #ff5a60;
+
+  /* type */
+  --font-display: 'Big Shoulders Display', sans-serif;
+  --font-body: 'IBM Plex Sans', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+
+  /* shape */
+  --chamfer-lg: 28px;
+  --chamfer-md: 16px;
+  --chamfer-sm: 9px;
+
+  /* motion */
+  --ease-out: cubic-bezier(.16,1,.3,1);
+  --ease-inout: cubic-bezier(.65,0,.35,1);
+  /* "Mechanical": hard acceleration, dead stop, zero overshoot — used for
+     wipes, sweeps and shutters so motion reads engineered, not springy. */
+  --ease-mech: cubic-bezier(.77,0,.18,1);
+
+  /* durations — exits run faster than entrances */
+  --dur-fast: 180ms;
+  --dur-base: 320ms;
+  --dur-slow: 640ms;
+}
+
+
+/* 3. TYPOGRAPHY -------------------------------------------------------------- */
+
+body {
+  background-color: var(--ink-950);
+  /* No grid any more: the wind-tunnel flow field (section 33) lives on
+     the fixed .atmosphere layer behind everything. */
+  color: var(--paper);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+  color: var(--paper);
+}
+
+h2 {
+  font-size: clamp(2.25rem, 4.2vw, 3.4rem);
+}
+
+h3 {
+  font-size: clamp(1.35rem, 2.4vw, 1.7rem);
+  font-weight: 700;
+}
+
+h4 {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--steel);
+  letter-spacing: 0.02em;
+}
+
+p { color: var(--steel); max-width: 62ch; }
+
+::selection { background: var(--maroon); color: #000; }
+
+:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+}
+
+
+/* 4. LAYOUT UTILITIES --------------------------------------------------------- */
+
+.container {
+  width: 100%;
+  max-width: 1360px;
+  margin: 0 auto;
+  /* --gutter (section 33a): wide side margins so the work, not the UI,
+     fills the frame. */
+  padding: 0 var(--gutter);
+}
+
+section { position: relative; padding: 160px 0; }
+
+.section-head { max-width: 640px; margin-bottom: 64px; }
+
+.section-head__sub { margin-top: 16px; font-size: 1.05rem; }
+
+
+/* 5. ATMOSPHERE --------------------------------------------------------------- */
+
+.atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* The schematic grid itself now lives once, on body (see section 2) with
+   background-attachment: fixed — this div is kept in the markup only for
+   the grain texture below; it no longer paints its own grid, so there's
+   nothing left here to double up with body's copy. */
+
+.atmosphere__grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+
+main, .navbar, .ruler, footer { position: relative; z-index: 1; }
+
+
+/* 6. CURVE UTILITY (was "chamfer") --------------------------------------------- */
+/* The class name stays on existing markup; the cut corners became an
+   aerodynamic radius. Buttons override it with a full pill (section 33). */
+
+.chamfer { border-radius: var(--radius-lg); }
+
+
+/* 7. SCROLL REVEAL SYSTEM ------------------------------------------------------ */
+
+/* Expo-out: lands hard with no overshoot. --delay comes from inline styles
+   or the per-column stagger in script.js. */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+  transition-delay: var(--delay, 0ms);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes line-up {
+  from { transform: translateY(115%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.reveal-on-load {
+  opacity: 0;
+  animation: fade-in-up 0.9s var(--ease-out) forwards;
+  animation-delay: 1.05s;
+}
+
+.hero__actions.reveal-on-load { animation-delay: 1.25s; }
+
+
+/* 8. SECTION RULER (SCROLLSPY) -------------------------------------------------- */
+
+.ruler {
+  position: fixed;
+  left: 40px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 40;
+  display: none;
+}
+
+.ruler ol {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 34px;
+}
+
+.ruler ol::before {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 4px;
+  bottom: 4px;
+  width: 1px;
+  background: var(--line);
+}
+
+.ruler a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+}
+
+.ruler__tick {
+  width: 7px;
+  height: 7px;
+  background: var(--ink-800);
+  border: 1px solid var(--steel-dim);
+  transition: background 0.3s, border-color 0.3s, transform 0.3s;
+  flex-shrink: 0;
+}
+
+.ruler__label {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  color: var(--steel-dim);
+  writing-mode: horizontal-tb;
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity 0.3s, transform 0.3s, color 0.3s;
+  white-space: nowrap;
+}
+
+.ruler a:hover .ruler__label,
+.ruler li.is-active .ruler__label {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.ruler li.is-active .ruler__tick {
+  background: var(--maroon);
+  border-color: var(--maroon);
+  transform: scale(1.3);
+}
+
+.ruler li.is-active .ruler__label { color: var(--blue-text); }
+
+@media (min-width: 1240px) {
+  .ruler { display: block; }
+}
+
+
+/* 9. NAVBAR ---------------------------------------------------------------------- */
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  padding: 32px 0;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.4s, padding 0.4s;
+}
+
+/* The solid backing lives on a pseudo-element, not .navbar itself. Never
+   put transform / filter / backdrop-filter on .navbar: it would become
+   the containing block for the fixed mobile menu and squash it. */
+.navbar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--ink-950);
+}
+
+.navbar.is-scrolled {
+  padding: 20px 0;
+  border-bottom-color: var(--hairline);
+}
+
+
+.navbar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.navbar__mark {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navbar__mark-img {
+  height: 34px;
+  width: auto;
+  display: block;
+}
+
+.navbar__menu {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+.navbar__links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.navbar__links a {
+  font-size: 0.95rem;
+  color: var(--steel);
+  position: relative;
+  padding-bottom: 4px;
+  transition: color 0.25s;
+}
+
+.navbar__links a::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 0;
+  height: 1px;
+  background: var(--blue);
+  transition: width 0.3s var(--ease-out);
+}
+
+.navbar__links a:hover {
+  color: var(--paper);
+}
+
+.navbar__links a:hover::after { width: 100%; }
+
+/* A real <button> (was a hidden checkbox + label, which keyboard users
+   couldn't reach). 44×44 hit area around the 24px bars. */
+.nav-toggle-btn {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  margin-right: -10px;
+  padding: 0;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  z-index: 60;
+}
+
+.nav-toggle-btn span {
+  width: 24px;
+  height: 2px;
+  background: var(--paper);
+  transition: transform 0.3s, opacity 0.3s;
+}
+
+
+/* 10. BUTTONS --------------------------------------------------------------------- */
+
+.btn {
+  --chamfer: var(--chamfer-sm);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 26px;
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  font-weight: 600;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.btn--small { padding: 10px 20px; font-size: 0.875rem; }
+
+/* Pure black on the brand red (4.7:1) and paper on the blue hover (4.8:1)
+   both clear AA; --ink-950 on either fell short. */
+.btn--primary {
+  background: var(--maroon);
+  color: #000;
+}
+
+/* Hover states for both buttons live in section 33c. */
+.btn--primary:hover,
+.btn--primary:focus-visible { color: var(--paper); }
+
+.btn--ghost {
+  background: transparent;
+  color: var(--paper);
+  border: 1px solid var(--line);
+}
+
+.btn--ghost::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--paper);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s var(--ease-inout);
+  z-index: -1;
+}
+
+.btn--ghost:hover {
+  color: var(--ink-950);
+  border-color: var(--paper);
+}
+
+.btn--ghost:hover::before { transform: scaleX(1); }
+
+
+/* 11. HERO ----------------------------------------------------------------------- */
+
+.hero {
+  min-height: 92vh;
+  display: flex;
+  align-items: center;
+  padding: 160px 0 96px;
+  overflow: hidden;
+}
+
+.hero__backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+}
+
+.hero__bg-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(55%) brightness(0.55) contrast(1.05);
+  animation: hero-drift 24s ease-in-out infinite alternate;
+}
+
+@keyframes hero-drift {
+  from { transform: scale(1.06) translate(0, 0); }
+  to   { transform: scale(1.12) translate(-1%, -1%); }
+}
+
+/* Stands in for .hero__bg-image (or any other project media slot) when a
+   project has no image yet — see PROJECTS[id].mainImage in script.js. Kept
+   generic/reusable rather than hero-specific. */
+.media-placeholder {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--ink-950);
+}
+
+.hero__scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(18,19,21,0.92) 25%, rgba(18,19,21,0.3) 80%),
+    linear-gradient(to top, var(--ink-950), transparent 30%);
+}
+
+.hero__content { max-width: 760px; }
+
+.hero__headline {
+  font-size: clamp(2.9rem, 7vw, 6rem);
+  margin-bottom: 28px;
+}
+
+.line-wrap { overflow: hidden; display: block; }
+
+.line {
+  display: block;
+  transform: translateY(115%);
+  animation: line-up 0.85s var(--ease-out) forwards;
+}
+
+.line-wrap:nth-child(1) .line { animation-delay: 0.25s; }
+.line-wrap:nth-child(2) .line { animation-delay: 0.42s; }
+
+.hero__sub {
+  font-size: 1.15rem;
+  max-width: 52ch;
+  margin-bottom: 36px;
+}
+
+.hero__actions { display: flex; gap: 16px; flex-wrap: wrap; }
+
+.hero__scroll-cue {
+  position: absolute;
+  bottom: 40px;
+  left: 32px;
+  width: 26px;
+  height: 42px;
+  border: 1px solid var(--steel-dim);
+}
+
+.hero__scroll-cue span {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  width: 4px;
+  height: 8px;
+  background: var(--blue);
+  border-radius: 2px;
+  transform: translateX(-50%);
+  animation: scroll-cue 1.8s ease-in-out infinite;
+}
+
+@keyframes scroll-cue {
+  0% { top: 8px; opacity: 1; }
+  70% { top: 22px; opacity: 0; }
+  100% { top: 8px; opacity: 0; }
+}
+
+@media (max-width: 1239px) {
+  .hero__scroll-cue { display: none; }
+}
+
+
+/* 12. PRACTICE / EXPERTISE -------------------------------------------------------- */
+
+.practice { background: var(--ink-900); }
+
+/* Flush hairline grid, built like the gallery (section 33e). */
+.practice__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  border-top: 1px solid var(--hairline);
+  border-left: 1px solid var(--hairline);
+}
+
+.practice-card {
+  --chamfer: var(--chamfer-lg);
+  position: relative;
+  background: var(--ink-900);
+  border: 0;
+  border-right: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+  padding: 48px 40px;
+}
+
+.practice-card__bg { overflow: hidden; }
+
+/* Red rule drawn over the cell's shared edges on hover. */
+.practice-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: 2;
+  border: 1px solid transparent;
+  pointer-events: none;
+  transition: border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.practice-card:hover { z-index: 1; }
+.practice-card:hover::before { border-color: var(--maroon); }
+
+.practice-card__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.practice-card__bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(100%) brightness(0.35);
+  opacity: 0.5;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s;
+}
+
+.practice-card:hover .practice-card__bg img {
+  transform: scale(1.02);
+  opacity: 0.65;
+}
+
+.practice-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(26, 28, 31, 0.82);
+  z-index: 0;
+}
+
+.practice-card__body { position: relative; z-index: 1; }
+
+.practice-card__icon {
+  width: 40px;
+  height: 40px;
+  fill: none;
+  stroke: var(--blue);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  margin-bottom: 24px;
+}
+
+.practice-card h3 { margin-bottom: 14px; }
+
+.practice-card p { font-size: 0.95rem; }
+
+
+/* 13. WORK / PORTFOLIO GRID -------------------------------------------------------- */
+
+.work__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.project {
+  --chamfer: var(--chamfer-lg);
+  grid-column: span 2;
+  background: var(--ink-900);
+  border: 1px solid var(--line);
+  transition: border-color 0.35s, transform 0.35s;
+}
+
+.project--wide { grid-column: span 4; display: grid; grid-template-columns: 1.4fr 1fr; }
+
+
+.project__media {
+  display: block;
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+
+.project--wide .project__media { aspect-ratio: auto; height: 100%; min-height: 320px; }
+
+.project__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(70%) brightness(0.75) contrast(1.05);
+  transform: scale(1.02);
+  transition: transform 0.7s var(--ease-out), filter 0.6s;
+}
+
+
+.project__body { padding: 28px 30px 30px; }
+
+.project__tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  color: var(--blue-text);
+  border: 1px solid var(--maroon);
+  padding: 4px 10px;
+  margin-bottom: 16px;
+}
+
+.project__body h3 { margin-bottom: 10px; font-size: 1.4rem; }
+
+.project__body p { font-size: 0.92rem; margin-bottom: 18px; }
+
+.project__meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.75rem;
+  color: var(--steel-dim);
+}
+
+.meta-div {
+  width: 1px;
+  height: 12px;
+  background: var(--line);
+}
+
+
+/* 14. CONTACT / FOOTER -------------------------------------------------------------- */
+
+.contact { background: var(--ink-900); border-top: 1px solid var(--hairline); padding-top: 160px; }
+
+.contact__top { margin-bottom: 72px; }
+
+.contact__top h2 { margin-bottom: 28px; }
+
+.contact__email {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 5vw, 3.2rem);
+  font-weight: 700;
+  color: var(--paper);
+  border-bottom: 2px solid var(--maroon);
+  padding-bottom: 6px;
+  transition: color 0.3s;
+}
+
+.contact__email:hover { color: var(--red-text); }
+
+.contact__note { margin-top: 24px; max-width: 48ch; }
+
+.contact__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  padding: 72px 0;
+  border-top: 1px solid var(--hairline);
+}
+
+.contact__col h4 { margin-bottom: 16px; }
+
+.contact__col p { font-size: 0.95rem; }
+
+.contact__list li { margin-bottom: 0; }
+
+/* Padded to a 44px tap target; the old 10px li gap is now inside the link. */
+.contact__list a {
+  display: inline-block;
+  padding: 9px 0;
+  font-size: 0.95rem;
+  color: var(--steel);
+  transition: color 0.25s;
+}
+
+.contact__list a:hover { color: var(--red-text); }
+
+.contact__bottom {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 44px 0 56px;
+  border-top: 1px solid var(--hairline);
+}
+
+.contact__mark-img {
+  height: 26px;
+  width: auto;
+  display: block;
+}
+
+.contact__bottom p {
+  flex: 1;
+  font-size: 0.8rem;
+  color: var(--steel-dim);
+}
+
+.contact__top-link {
+  display: inline-block;
+  padding: 12px 0;
+  font-size: 0.8rem;
+  color: var(--steel);
+  transition: color 0.25s;
+}
+
+.contact__top-link:hover { color: var(--blue-text); }
+
+
+/* 15. RESPONSIVE ---------------------------------------------------------------------- */
+
+/* Navbar collapses to the slide-in menu well above phone width: eight links
+   plus the CTA and logo need ~1,150px in one row, so anything narrower used
+   to wrap/clip them. Opened by the button via aria-expanded (script.js). */
+@media (max-width: 1199px) {
+  .nav-toggle-btn { display: flex; }
+
+  .navbar__menu {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(420px, 70%);
+    background: var(--ink-900);
+    border-left: 1px solid var(--line);
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 32px;
+    padding: 40px;
+    overflow-y: auto;
+    transform: translateX(100%);
+    /* visibility keeps the off-screen links out of the Tab order while
+       closed; its delay lets the slide-out finish before it hides. */
+    visibility: hidden;
+    transition: transform 0.4s var(--ease-inout), visibility 0s linear 0.4s;
+  }
+
+  .navbar__links { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .navbar__links a { display: block; padding: 8px 0; font-size: 1.3rem; }
+
+  .nav-toggle-btn[aria-expanded="true"] ~ .navbar__menu {
+    transform: translateX(0);
+    visibility: visible;
+    transition: transform 0.4s var(--ease-inout), visibility 0s;
+  }
+
+  .nav-toggle-btn[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-toggle-btn[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+  .nav-toggle-btn[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+}
+
+/* Touch screens never fire :hover, so project imagery would stay 70% grey
+   there. Show it in full colour by default and keep the grey-to-colour
+   reveal only for devices that can actually hover. */
+@media (hover: none) {
+  .project__media img { filter: none; }
+}
+
+@media (max-width: 960px) {
+  .practice__grid { grid-template-columns: 1fr; }
+  .work__grid { grid-template-columns: repeat(2, 1fr); }
+  .project { grid-column: span 2; }
+  .project--wide { grid-column: span 2; grid-template-columns: 1fr; }
+  .project--wide .project__media { min-height: 240px; }
+  .contact__grid { grid-template-columns: 1fr; gap: 40px; }
+  .about-intro__grid { grid-template-columns: 1fr; gap: 48px; }
+  .about-intro__frame { max-width: 380px; margin: 0 auto; }
+}
+
+@media (max-width: 760px) {
+  section { padding: 104px 0; }
+
+  .hero { padding-top: 120px; min-height: auto; }
+
+  .work__grid { grid-template-columns: 1fr; }
+  .project { grid-column: span 1; }
+  .project--wide { grid-column: span 1; }
+
+  .contact__bottom { flex-wrap: wrap; }
+  .contact__bottom p { order: 3; width: 100%; }
+
+  .storyboard__meta-strip { gap: 28px; }
+}
+
+
+/* 16. REDUCED MOTION & ACCESSIBILITY ---------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .line { transform: translateY(0); }
+  .reveal { opacity: 1; transform: none; }
+  .reveal-left, .reveal-right { opacity: 1; transform: none; }
+  .hero__bg-image { animation: none; }
+}
+
+
+/* 17. DIRECTIONAL SCROLL REVEALS ------------------------------------------------------- */
+
+.reveal-left,
+.reveal-right {
+  opacity: 0;
+  transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out);
+  transition-delay: var(--delay, 0ms);
+}
+
+.reveal-left  { transform: translateX(-72px); }
+.reveal-right { transform: translateX(72px); }
+
+.reveal-left.is-visible,
+.reveal-right.is-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+
+/* 18. MIXED-MEDIA IMAGE TEXTURE --------------------------------------------------------- */
+/* A tactile, high-contrast duotone + halftone treatment for hero/gallery imagery.
+   Apply to an image's already-positioned wrapper (.hero__backdrop, .project__media,
+   .about-intro__frame-inner) — pseudo-elements can't render on a bare <img>, so the
+   duotone tint and halftone grain live on the container while the base filter and
+   blend mode target its child <img> directly. */
+
+.mixed-media-filter {
+  isolation: isolate;
+}
+
+.mixed-media-filter > img {
+  filter: grayscale(90%) contrast(1.4) brightness(0.85);
+  mix-blend-mode: luminosity;
+}
+
+.mixed-media-filter::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: var(--maroon);
+  mix-blend-mode: color;
+  opacity: 0.82;
+  pointer-events: none;
+}
+
+.mixed-media-filter::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  opacity: 0.4;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  background-image: radial-gradient(circle, rgba(0,0,0,0.9) 1px, transparent 1.15px);
+  background-size: 5px 5px;
+}
+
+
+/* 19. PROJECT TEXT COLUMN ----------------------------------------------------------------- */
+/* Description, meta strip and tools in project.html's overview. */
+
+.storyboard__text {
+  position: relative;
+  max-width: 620px;
+  padding-bottom: 36px;
+}
+
+.storyboard__text p {
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+}
+
+.storyboard__meta-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px 56px;
+  margin-top: 40px;
+  padding-top: 32px;
+  border-top: 1px solid var(--line);
+}
+
+.storyboard__meta-item h4 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: var(--paper);
+  margin-bottom: 8px;
+}
+
+.storyboard__tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* 20. ABOUT — ASYMMETRICAL INTRO --------------------------------------------------------- */
+/* Cinematic split for about.html: a reveal-left text column paired with a
+   reveal-right portrait frame carrying the same maroon offset + mixed-media
+   treatment as the project storyboard frames. */
+
+.about-intro__grid {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 72px;
+  align-items: center;
+}
+
+.about-intro__text p {
+  font-size: 1.05rem;
+  margin-bottom: 20px;
+}
+
+.about-intro__text p:last-child { margin-bottom: 0; }
+
+.about-intro__frame {
+  position: relative;
+  width: 100%;
+  max-width: 460px;
+}
+
+.about-intro__frame::before {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  right: -20px;
+  bottom: -20px;
+  background: var(--maroon);
+  z-index: 0;
+}
+
+.about-intro__frame-inner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+}
+
+.about-intro__frame-inner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+}
+
+/* Scoped override of the shared .mixed-media-filter::before duotone (see
+   section 18) — that bright maroon -> blue diagonal is the same outdated
+   wash that used to sit over the project hero. This brings the portrait in
+   line with the current project-page treatment: dark ink/charcoal fading
+   into a low-alpha Brand Red glow (rgb(235,28,36), matching the project
+   hero's accent), with everything kept well under 0.6 alpha so the photo
+   itself stays clearly visible instead of getting buried under a flat
+   tint. mix-blend-mode: normal, same reasoning as the project hero — a
+   plain alpha composite behaves more predictably than `color` blending. */
+.about-intro__frame-inner.mixed-media-filter::before {
+  background: rgba(10, 10, 10, 0.3);
+  mix-blend-mode: normal;
+}
+
+
+/* 21. PROJECT DETAIL SHOTS ---------------------------------------------------------------- */
+/* Cinematic macro crops beside the project overview text. Each .image-zoom-crop
+   frames a different corner/scale of the SAME source image (project.mainImage,
+   injected at runtime by script.js) via object-position + transform: scale(),
+   so one file reads as a set of tight, tactile close-up details — no extra
+   image assets required. */
+
+.overview__top {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 64px;
+  align-items: start;
+}
+
+/* All description paragraphs render together here (see script.js), instead
+   of being split across alternating storyboard chapters below — that split
+   layout was what created the huge visual gap: the left column would end
+   after just the lede, while the page didn't continue until the much taller
+   right-hand image stack finished. Flex + a fixed gap keeps every paragraph
+   stacked tight at the top of the column, sized to its own content only. */
+.storyboard__text-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  justify-content: flex-start;
+  align-self: start;
+}
+
+.storyboard__text-body p {
+  /* Same size/line-height/color as the index.html hero__sub paragraph —
+     font-size set explicitly here (font-family, line-height, and the
+     muted var(--steel) color already come from the base body/p rules). */
+  font-size: 1.15rem;
+  margin-bottom: 0;
+}
+
+.project-details {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.project-details__frame {
+  position: relative;
+}
+
+.project-details__frame::before {
+  content: attr(data-index);
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 2;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  color: var(--blue-text);
+  background: var(--ink-950);
+  border: 1px solid var(--maroon);
+  padding: 4px 9px;
+}
+
+/* Detail photo frame: the whole photo at its own aspect ratio (no crop).
+   Hover / focus zooms it 1.02 inside the frame, like the gallery cells. */
+.image-zoom-crop {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: var(--ink-900);
+}
+
+.image-zoom-crop img {
+  width: 100%;
+  height: auto;
+  display: block;
+  cursor: zoom-in;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.project-details__frame:hover .image-zoom-crop img,
+.image-zoom-crop img:focus-visible { transform: scale(1.02); }
+
+@media (prefers-reduced-motion: reduce) {
+  .project-details__frame:hover .image-zoom-crop img,
+  .image-zoom-crop img:focus-visible { transform: none; }
+}
+
+/* Only a mainImage, no detail photos: script.js removes the detail column
+   and the overview runs as one column. Text keeps its readable measure
+   (p max-width); the full render spans the whole width. */
+.overview__top--single { grid-template-columns: minmax(0, 1fr); }
+
+/* The text column normally caps at 620px; with no detail column beside it
+   the cap lifts so the full render can use the whole width. Paragraphs
+   keep their own ~62ch measure. */
+.overview__top--single .storyboard__text { max-width: none; }
+
+@media (max-width: 960px) {
+  .overview__top { grid-template-columns: 1fr; gap: 40px; }
+  .project-details { flex-direction: row; flex-wrap: wrap; }
+  .project-details__frame { flex: 1 1 calc(33.333% - 14px); min-width: 140px; }
+}
+
+@media (max-width: 760px) {
+  .project-details__frame { flex: 1 1 100%; }
+}
+
+
+/* 22. PROJECT HERO — OVERLAPPING TITLE ------------------------------------------------------ */
+/* A massive, blocky title sitting in front of the mixed-media-filter hero
+   image on project.html — same Big Shoulders Display treatment as the
+   index.html hero__headline. Both the title and the back-link/category-tag
+   group sit in normal flow (stacked in a flex column), so the nav group
+   naturally lands directly underneath the title instead of needing to be
+   independently positioned. */
+
+.hero--project {
+  min-height: 78vh;
+  padding: 160px 0 96px;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-end;
+}
+
+/* One shared .container wrapper for the title AND the back-link/tag row
+   below it — both previously sat in their own separately-constrained boxes
+   (the title used a full-bleed 5vw gutter, the row used a centered
+   .container), so their left edges only lined up by coincidence at certain
+   viewport widths. Flex-column + align-items: flex-start now snaps
+   everything to one flush left edge, with `gap` handling all the vertical
+   spacing that used to come from ad-hoc margins on the children. */
+.hero__title-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.hero-project-title {
+  margin: 0;
+  /* Capped so most titles wrap across 2-3 lines instead of running the full
+     width of the hero as one long line — a tight line-height plus
+     text-wrap: balance keeps those stacked lines reading as one cohesive,
+     cinematic block instead of an unevenly-broken paragraph. */
+  max-width: 800px;
+  /* Same family/weight as the index.html hero__headline (both ultimately
+     inherit the shared h1,h2,h3,h4 rule) — font-size is scaled up and
+     line-height tightened further here to keep the massive, overlapping
+     presence. No red text-shadow: the text sits directly on the dark hero
+     backdrop, same crisp-white-on-charcoal contrast as the home page hero. */
+  font-family: var(--font-display);
+  font-weight: 800;
+  line-height: 0.92;
+  letter-spacing: -0.01em;
+  font-size: clamp(2.75rem, 9vw, 7.5rem);
+  color: var(--paper);
+  text-wrap: balance;
+  overflow-wrap: break-word;
+}
+
+/* Back link + category tag: a tight, left-aligned row directly beneath the
+   title, spaced to match the rhythm of the rest of the page's headings. */
+.hero__content--below-title {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+@media (max-width: 760px) {
+  .hero--project { padding: 140px 0 64px; }
+  .hero-project-title {
+    font-size: clamp(2.25rem, 11vw, 4.5rem);
+  }
+}
+
+
+/* 23. PROJECT HERO — CINEMATIC OVERLAY --------------------------------------------------- */
+/* The shared .mixed-media-filter::before duotone (maroon -> bright blue,
+   diagonal) reads as a generic bright-blue/purple wash when it's the only
+   thing tinting a full hero image behind large text. Overridden here, scoped
+   to just the project hero backdrop (about-page portraits, storyboard
+   gallery frames, and detail-shot crops keep the original red/blue duotone
+   treatment): solid dark ink/charcoal under the title on the left, radiating
+   out into a focused Brand Red glow (rgb(235,28,36) — the same color as the
+   "Start a project" button) over the image on the right, rather than an
+   even wash across the whole frame. A `radial-gradient` centered off to the
+   right is what makes that highlight read as "focused" instead of a flat
+   diagonal tint; the 100% stop (the point farthest from that center, i.e.
+   the far-left edge under the text) is where the dark ink is solid.
+   Everything stays low-alpha enough (0.35 red at its most concentrated,
+   fading further at the edges) that the source photo still reads through
+   clearly. mix-blend-mode: normal — a plain alpha composite. */
+.hero--project .hero__backdrop.mixed-media-filter::before {
+  background: linear-gradient(90deg, rgba(10, 10, 10, 0.92) 30%, rgba(10, 10, 10, 0.45));
+  mix-blend-mode: normal;
+}
+
+
+/* 24. TECHNICAL TELEMETRY -------------------------------------------------------------- */
+/* A motorsport-data-dash / CAD-schematic layer for project.html: small
+   monospaced red "readout" tags scattered around the layout, and
+   viewfinder-style corner crosshairs on the zoomed detail shots. Populated/
+   varied at runtime by script.js. (The schematic grid that used to be
+   duplicated here — a second, different-pitch copy layered on top of the
+   sitewide one — now lives once, on body; see section 2.) */
+
+.telemetry-tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--red-text);
+  white-space: nowrap;
+}
+
+/* Hero: tucked tightly above the massive title. */
+.hero__title-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+/* Text column: anchoring the bottom-left/bottom-right corners (see the
+   padding-bottom + position: relative added to .storyboard__text above). */
+.telemetry-tag--corner-left,
+.telemetry-tag--corner-right {
+  position: absolute;
+  bottom: 0;
+}
+
+.telemetry-tag--corner-left { left: 0; }
+.telemetry-tag--corner-right { right: 0; }
+
+/* Detail shots: a readout opposite the existing numbered index chip
+   (.project-details__frame::before sits top-left), plus viewfinder-style
+   corner crosshairs on the crop itself. */
+.telemetry-tag--detail {
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  z-index: 2;
+}
+
+.image-zoom-crop::before,
+.image-zoom-crop::after {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+}
+
+.image-zoom-crop::before {
+  top: 8px;
+  left: 8px;
+  border-top: 1px solid rgba(236, 233, 226, 0.55);
+  border-left: 1px solid rgba(236, 233, 226, 0.55);
+}
+
+.image-zoom-crop::after {
+  bottom: 8px;
+  right: 8px;
+  border-bottom: 1px solid rgba(236, 233, 226, 0.55);
+  border-right: 1px solid rgba(236, 233, 226, 0.55);
+}
+
+
+/* 25. FULL UNFILTERED RENDER --------------------------------------------- */
+/* The project's mainImage again, but deliberately plain — never nested in
+   .mixed-media-filter (see section 21) or the hero backdrop, so it carries
+   none of the halftone/duotone/gradient treatment applied everywhere else
+   on the page. Populated by script.js; see #project-full-render. */
+
+/* Sits in the left column (.storyboard__text) under the meta strip, so it
+   spans exactly that column's width and never pushes past the grid. */
+.project-full-render { text-align: left; }
+
+.full-detail-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: 4rem;
+  cursor: zoom-in;
+}
+
+.telemetry-tag--full-render {
+  display: inline-block;
+  margin-top: 16px;
+}
+
+
+/* 26. CONTACT PAGE ------------------------------------------------------------- */
+/* contact.html: direct info on the left, enquiry form on the right. Uses the
+   same .container / section padding as every other page so it sits on the
+   shared body grid. */
+
+.contact-page { padding-top: 176px; }
+
+.contact-page__grid {
+  display: grid;
+  grid-template-columns: 2fr 3fr;
+  gap: 72px;
+  align-items: start;
+}
+
+.contact-page__info .telemetry-tag {
+  white-space: normal;
+  margin-bottom: 20px;
+}
+
+.contact-page__headline { font-size: clamp(2.9rem, 6vw, 5.2rem); }
+
+.contact-page__lede { font-size: 1.1rem; margin-bottom: 48px; }
+
+/* Direct-info block: two stacked rows split by a hairline. */
+.contact-card {
+  border: 1px solid var(--line);
+  background: rgba(26, 28, 31, 0.6);
+}
+
+.contact-card__row { padding: 24px 28px; }
+
+.contact-card__row + .contact-card__row { border-top: 1px solid var(--line); }
+
+.contact-card__label,
+.form-field label {
+  display: block;
+  margin-bottom: 10px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.contact-card__label { color: var(--steel-dim); }
+
+.contact-card__value {
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 2.2vw, 1.7rem);
+  font-weight: 700;
+  color: var(--paper);
+  overflow-wrap: anywhere;
+  transition: color 0.25s;
+}
+
+.contact-card__value:hover { color: var(--red-text); }
+
+/* Form: telemetry-readout fields — dark translucent wells, bright input
+   text, red mono labels, and a red glow on focus. */
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding: 40px;
+  border: 1px solid var(--line);
+  background: rgba(18, 19, 21, 0.7);
+}
+
+.form-field label { color: var(--red-text); }
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+  display: block;
+  width: 100%;
+  padding: 14px 16px;
+  background: rgba(10, 10, 10, 0.45);
+  border: 1px solid var(--line);
+  border-bottom: 2px solid var(--steel-dim);
+  border-radius: 0;
+  color: var(--paper);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.5;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.form-field textarea { resize: vertical; min-height: 180px; }
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+  outline: none;
+  background: rgba(10, 10, 10, 0.7);
+  border-color: var(--maroon);
+}
+
+.contact-form__submit {
+  align-self: flex-start;
+  border: 0;
+  cursor: pointer;
+}
+
+/* Footer on this page is just the bottom bar — the full "Let's build
+   something" block would repeat the page above. */
+.contact--compact { padding-top: 0; }
+
+@media (max-width: 960px) {
+  .contact-page__grid { grid-template-columns: 1fr; gap: 56px; }
+}
+
+@media (max-width: 760px) {
+  .contact-page { padding-top: 128px; }
+  .contact-form { padding: 28px 22px; }
+  .contact-card__row { padding: 20px 22px; }
+  .contact-form__submit { align-self: stretch; justify-content: center; }
+}
+
+
+/* 27. PROJECT PREV / NEXT ---------------------------------------------------- */
+/* Fixed bottom bar on project.html (filled in by script.js): PREV pushed to
+   the left edge, NEXT to the right, always on screen. --pager-h is shared
+   with the body padding below so the end of the page can scroll clear of
+   the bar. */
+
+.page-project { --pager-h: 72px; }
+
+/* Keyboard focus near the bottom of a project page stays clear of the
+   fixed pager bar (72px, 56px on phones; --pager-h is set on body, which
+   html can't read, so the values are repeated here). */
+html:has(.page-project) { scroll-padding-bottom: 88px; }
+
+@media (max-width: 760px) {
+  html:has(.page-project) { scroll-padding-bottom: 72px; }
+}
+
+.project-pager {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 990;
+  height: var(--pager-h);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 48px;
+  padding: 1.5rem 4rem;
+  background: var(--ink-950);
+  border-top: 1px solid var(--hairline);
+}
+
+.project-pager[hidden] { display: none; }
+
+.project-pager__link {
+  max-width: 48%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  font-weight: 700; /* 700 is loaded for IBM Plex Mono in project.html */
+  line-height: 1.2;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--paper);
+  transition: color 0.2s;
+}
+
+.project-pager__link--next { text-align: right; }
+
+.project-pager__link:hover,
+.project-pager__link:focus-visible {
+  color: var(--red-text);
+}
+
+/* Room at the very bottom of the page equal to the bar, so the footer's
+   last line (and everything above it) can scroll fully clear of it. */
+.page-project { padding-bottom: var(--pager-h); }
+
+/* <main> carries z-index: 1 (section 5), which traps the fixed pager in
+   main's stacking context; the footer (also z-index: 1, later in the DOM)
+   would then paint over it. Lifting main one level on project pages keeps
+   the bar on top — main and footer never overlap otherwise. */
+.page-project main { z-index: 2; }
+
+@media (max-width: 760px) {
+  .page-project { --pager-h: 56px; }
+
+  .project-pager {
+    gap: 16px;
+    padding: 1rem 22px;
+  }
+
+  .project-pager__link { font-size: 0.8rem; letter-spacing: 1px; }
+}
+
+
+/* 28. LIGHTBOX ----------------------------------------------------------------- */
+/* Full-screen view of the unfiltered render; created/removed by script.js.
+   Opens like a shutter: the backdrop fades up, the image is revealed by a
+   clip-path wipe from its centre line, the red viewfinder brackets lock in
+   and the HUD readout drops down. Closing reverses it, faster. States:
+   (none) -> .is-open -> .is-closing -> removed. */
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 88px 32px 48px;
+  background: rgba(8, 9, 10, 0.94);
+  cursor: zoom-out;
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease-mech);
+}
+
+.lightbox.is-open { opacity: 1; }
+
+.lightbox.is-closing {
+  opacity: 0;
+  transition-duration: var(--dur-fast);
+}
+
+.lightbox__frame {
+  position: relative;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.lightbox__image {
+  display: block;
+  max-width: min(1600px, calc(100vw - 64px));
+  max-height: calc(100vh - 136px);
+  object-fit: contain;
+  clip-path: inset(50% 0 50% 0);
+  transition: clip-path var(--dur-slow) var(--ease-mech) 60ms;
+}
+
+.lightbox.is-open .lightbox__image { clip-path: inset(0 0 0 0); }
+
+.lightbox.is-closing .lightbox__image {
+  clip-path: inset(50% 0 50% 0);
+  transition-duration: var(--dur-fast);
+  transition-delay: 0ms;
+}
+
+/* Viewfinder brackets, same language as .image-zoom-crop, in Brand Red. */
+.lightbox__frame::before,
+.lightbox__frame::after {
+  content: '';
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease-mech), transform var(--dur-base) var(--ease-mech);
+  transition-delay: calc(var(--dur-slow) - 120ms);
+}
+
+.lightbox__frame::before {
+  top: -12px;
+  left: -12px;
+  border-top: 2px solid var(--maroon);
+  border-left: 2px solid var(--maroon);
+  transform: translate(-10px, -10px);
+}
+
+.lightbox__frame::after {
+  right: -12px;
+  bottom: -12px;
+  border-right: 2px solid var(--maroon);
+  border-bottom: 2px solid var(--maroon);
+  transform: translate(10px, 10px);
+}
+
+.lightbox.is-open .lightbox__frame::before,
+.lightbox.is-open .lightbox__frame::after {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+
+.lightbox.is-closing .lightbox__frame::before,
+.lightbox.is-closing .lightbox__frame::after {
+  opacity: 0;
+  transition-delay: 0ms;
+  transition-duration: var(--dur-fast);
+}
+
+/* HUD: image readout on the left, close control on the right. */
+.lightbox__hud {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 20px 32px;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: default;
+  transform: translateY(-100%);
+  transition: transform var(--dur-base) var(--ease-mech) 120ms;
+}
+
+.lightbox.is-open .lightbox__hud { transform: translateY(0); }
+
+.lightbox.is-closing .lightbox__hud {
+  transform: translateY(-100%);
+  transition-delay: 0ms;
+  transition-duration: var(--dur-fast);
+}
+
+.lightbox__readout {
+  color: var(--red-text);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.lightbox__close {
+  flex-shrink: 0;
+  min-height: 44px;
+  padding: 0 16px;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--paper);
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease-mech), color var(--dur-fast) var(--ease-mech);
+}
+
+.lightbox__close:hover,
+.lightbox__close:focus-visible {
+  border-color: var(--maroon);
+  color: var(--red-text);
+}
+
+@media (max-width: 760px) {
+  .lightbox { padding: 76px 16px 24px; }
+  .lightbox__hud { padding: 12px 16px; }
+  .lightbox__image {
+    max-width: calc(100vw - 32px);
+    max-height: calc(100vh - 110px);
+  }
+}
+
+/* The trigger image is a keyboard-reachable button (script.js). */
+.full-detail-image {
+  outline: 1px solid transparent;
+  outline-offset: 6px;
+  transition: filter var(--dur-base) var(--ease-mech), outline-color var(--dur-base) var(--ease-mech);
+}
+
+.full-detail-image:hover,
+.full-detail-image:focus-visible {
+  filter: brightness(1.08);
+  outline-color: var(--maroon);
+}
+
+
+/* 29. MOTION SYSTEM — HOVER & REVEAL ------------------------------------------ */
+/* Everything here animates transform / opacity / clip-path only, so it
+   stays on the compositor. Hover effects are mirrored on :focus-visible /
+   :focus-within so keyboard users get the same feedback. */
+
+/* Button and card hover states live in section 33 (wind tunnel). */
+
+/* -- Project pager (persistent bottom bar): a red read-progress rail along
+      its top edge, directional nudges and underline sweeps on the links. */
+
+.project-pager::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--maroon);
+  transform: scaleX(var(--progress, 0));
+  transform-origin: left;
+}
+
+/* Slides up only on arrival from a non-project page (.is-entering, set by
+   script.js); between projects it's held still by the view transition. */
+.project-pager.is-entering:not([hidden]) {
+  animation: pager-in 560ms var(--ease-mech) 350ms both;
+}
+
+@keyframes pager-in {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+.project-pager__link {
+  position: relative;
+  padding-bottom: 4px;
+  transition: color var(--dur-fast) var(--ease-mech), transform var(--dur-base) var(--ease-mech);
+}
+
+.project-pager__link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--maroon);
+  transform: scaleX(0);
+  transition: transform var(--dur-base) var(--ease-mech);
+}
+
+.project-pager__link--prev::after { transform-origin: left; }
+.project-pager__link--next::after { transform-origin: right; }
+
+.project-pager__link:hover::after,
+.project-pager__link:focus-visible::after { transform: scaleX(1); }
+
+.project-pager__link--prev:hover,
+.project-pager__link--prev:focus-visible { transform: translateX(-4px); }
+
+.project-pager__link--next:hover,
+.project-pager__link--next:focus-visible { transform: translateX(4px); }
+
+/* Hover-only affordances are dropped on touch screens, where :hover
+   sticks after a tap. */
+@media (hover: none) {
+  .project:hover::before,
+  .project:hover::after,
+  .practice-card:hover::before { transform: scaleX(0); }
+  .project:hover .project__body::after { opacity: 0; }
+  .project:hover .project__media::after { animation: none; }
+}
+
+
+/* 30. PARALLAX GRID & PAGE TRANSITIONS ------------------------------------------ */
+
+/* Hero backdrops drift down at a quarter of scroll speed (script.js). */
+.fx-parallax .hero__backdrop { will-change: transform; }
+
+/* Cross-document page transitions: native View Transitions, no JS, never
+   delays navigation; browsers without support just navigate normally.
+   The outgoing page lifts and fades fast; the incoming page is revealed by
+   a top-to-bottom shutter wipe. The grid layer and navbar are captured
+   separately and hold still, so only the content moves. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+
+  .atmosphere    { view-transition-name: atmosphere; }
+  .navbar        { view-transition-name: site-nav; }
+  .project-pager { view-transition-name: project-pager; }
+
+  ::view-transition-old(root) {
+    animation: vt-out 220ms cubic-bezier(.77,0,.18,1) both;
+  }
+
+  ::view-transition-new(root) {
+    animation: vt-in 560ms cubic-bezier(.77,0,.18,1) both;
+  }
+
+  ::view-transition-group(atmosphere),
+  ::view-transition-group(site-nav),
+  ::view-transition-old(atmosphere),
+  ::view-transition-new(atmosphere),
+  ::view-transition-old(site-nav),
+  ::view-transition-new(site-nav) {
+    animation-duration: 0s;
+  }
+}
+
+@keyframes vt-out {
+  to { opacity: 0; transform: translateY(-16px); }
+}
+
+@keyframes vt-in {
+  from { clip-path: inset(0 0 100% 0); }
+  to   { clip-path: inset(0 0 0 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project.reveal .project__media::before { display: none; }
+  .project-pager.is-entering:not([hidden]) { animation: none; }
+}
+
+
+/* 31. PREMIUM LAYER — TEXTURE, BLUEPRINT, CURSOR, HUD --------------------------- */
+/* Same brand (ink, Brand Red, mono, motorsport telemetry), sharper
+   execution. Split into:
+     (a. screen texture and e. work chapters were replaced by the wind
+     tunnel system, section 33.)
+     b. Mono navigation and mobile-menu stagger.
+     c. Homepage blueprint hero: mega title, HUD row/table, registration
+        marks, dimension line.
+     d. Sector labels and mega section headings.
+     f. Lightbox HUD additions and page boot scan.
+   Everything animates transform / opacity / clip-path only. */
+
+
+/* -- b. Mono navigation --------------------------------------------------------- */
+
+.navbar__links a {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.navbar__links a[aria-current="page"] { color: var(--paper); }
+
+.navbar__links a[aria-current="page"]::before {
+  content: '';
+  position: absolute;
+  left: -10px;
+  top: 50%;
+  width: 4px;
+  height: 4px;
+  margin-top: -4px;
+  background: var(--maroon);
+}
+
+@media (max-width: 1199px) {
+  .navbar__links a {
+    font-size: 1.05rem;
+    letter-spacing: 0.12em;
+  }
+
+  .navbar__links a[aria-current="page"]::before { left: -16px; margin-top: -2px; }
+
+  /* Links slide in one after another as the panel opens, then decrypt
+     (script.js). Closing is instant: exits run faster than entrances. */
+  .navbar__links li {
+    opacity: 0;
+    transform: translateX(28px);
+    transition: opacity 0.2s, transform 0.2s;
+  }
+
+  .nav-toggle-btn[aria-expanded="true"] ~ .navbar__menu .navbar__links li {
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity 0.4s var(--ease-out), transform 0.55s var(--ease-mech);
+    transition-delay: calc(120ms + var(--i, 0) * 45ms);
+  }
+
+  .navbar__links li:nth-child(1) { --i: 0; }
+  .navbar__links li:nth-child(2) { --i: 1; }
+  .navbar__links li:nth-child(3) { --i: 2; }
+  .navbar__links li:nth-child(4) { --i: 3; }
+  .navbar__links li:nth-child(5) { --i: 4; }
+  .navbar__links li:nth-child(6) { --i: 5; }
+  .navbar__links li:nth-child(7) { --i: 6; }
+  .navbar__links li:nth-child(8) { --i: 7; }
+}
+
+
+/* -- c. Blueprint hero ------------------------------------------------------------ */
+
+.hero--blueprint {
+  min-height: 100vh;
+  align-items: flex-end;
+  padding: 96px 0 100px;
+}
+
+.hero--blueprint .hero__content { max-width: 1360px; }
+
+.hero--blueprint .hero__scroll-cue { display: none; }
+
+.hud-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 32px;
+  margin-bottom: 28px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--steel-dim);
+}
+
+.hud-clock {
+  color: var(--paper);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Extreme scale: the title runs to ~11.5rem against 0.62rem data. */
+.hero__headline--mega {
+  /* Bound by width and height, so the whole hero block fits one screen. */
+  font-size: clamp(3.3rem, min(9.4vw, 16vh), 11rem);
+  font-weight: 900;
+  line-height: 0.84;
+  letter-spacing: -0.012em;
+  text-transform: uppercase;
+  margin-bottom: 36px;
+}
+
+.hero__accent { color: var(--maroon); }
+
+.line-wrap:nth-child(3) .line { animation-delay: 0.59s; }
+
+.hero__foot {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) auto;
+  gap: 32px 48px;
+  align-items: end;
+  padding-top: 28px;
+  border-top: 1px solid var(--line);
+}
+
+.hero--blueprint .hero__sub { margin-bottom: 0; font-size: 1.05rem; }
+
+.hud-table {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 32px;
+  margin: 0;
+}
+
+.hud-table div { display: flex; flex-direction: column; gap: 4px; }
+
+.hud-table dt {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--steel-dim);
+}
+
+.hud-table dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--paper);
+}
+
+.hud-table__live { color: var(--red-text) !important; }
+
+.hero--blueprint .hero__actions { flex-wrap: nowrap; }
+
+/* CAD registration marks: small crosshairs pinned to the frame corners. */
+.reg-mark {
+  position: absolute;
+  z-index: 1;
+  width: 22px;
+  height: 22px;
+  pointer-events: none;
+  background:
+    linear-gradient(var(--steel-dim), var(--steel-dim)) center / 1px 100% no-repeat,
+    linear-gradient(var(--steel-dim), var(--steel-dim)) center / 100% 1px no-repeat;
+  opacity: 0;
+  animation: fade-in-up 0.6s var(--ease-out) 1.2s forwards;
+}
+
+.reg-mark--tl { top: 104px; left: 24px; }
+.reg-mark--tr { top: 104px; right: 24px; }
+.reg-mark--bl { bottom: 24px; left: 24px; }
+.reg-mark--br { bottom: 24px; right: 24px; }
+
+/* Figure caption as a drawn dimension line. */
+.hero__fig {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 40px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.dim-line {
+  position: relative;
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+  transform-origin: left;
+  animation: dim-draw 1.2s var(--ease-mech) 1.3s both;
+}
+
+.dim-line::before,
+.dim-line::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  width: 1px;
+  height: 9px;
+  background: var(--steel-dim);
+}
+
+.dim-line::before { left: 0; }
+.dim-line::after { right: 0; }
+
+@keyframes dim-draw {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+.hero__fig-label {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  color: var(--steel-dim);
+}
+
+
+/* -- d. Sector labels & mega headings ------------------------------------------------ */
+
+.sector-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--red-text);
+  max-width: none;
+}
+
+.sector-label::before {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: var(--maroon);
+}
+
+.section-head__mega {
+  font-size: clamp(3rem, 8.2vw, 8.4rem);
+  font-weight: 900;
+  line-height: 0.86;
+  text-transform: uppercase;
+}
+
+
+.contact .section-head__mega { margin-bottom: 36px; }
+
+.practice-card__index {
+  display: block;
+  margin-bottom: 18px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  color: var(--steel-dim);
+}
+
+
+/* Blueprint hero on tablets and phones (restored: these used to share a
+   media block with the retired work chapters). */
+@media (max-width: 960px) {
+  .hero__foot { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .hero__foot .hero__actions { grid-column: 1 / -1; }
+}
+
+@media (max-width: 760px) {
+  .hero--blueprint { padding: 128px 0 104px; min-height: auto; }
+  .hero__foot { grid-template-columns: minmax(0, 1fr); }
+  .hero--blueprint .hero__actions { flex-wrap: wrap; }
+  .reg-mark { display: none; }
+  .hero__fig { bottom: 32px; padding: 0 var(--gutter); }
+  .hero__fig-label { font-size: 0.75rem; letter-spacing: 0.08em; flex-shrink: 1; line-height: 1.5; }
+  .hero__fig .dim-line { flex: 0 0 32px; }
+}
+
+
+/* -- f. Lightbox HUD additions, pager counter, boot scan -------------------------------- */
+
+.lightbox__hud--bottom {
+  top: auto;
+  bottom: 0;
+  border-bottom: 0;
+  border-top: 1px solid var(--line);
+  color: var(--steel-dim);
+  transform: translateY(100%);
+}
+
+.lightbox.is-open .lightbox__hud--bottom { transform: translateY(0); }
+.lightbox.is-closing .lightbox__hud--bottom { transform: translateY(100%); }
+
+.project-pager__link { max-width: 40%; }
+
+.project-pager__counter {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  color: var(--steel-dim);
+}
+
+@media (max-width: 760px) {
+  .project-pager__counter { display: none; }
+  .project-pager__link { max-width: 48%; }
+}
+
+/* -- Reduced motion ------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .dim-line,
+  .reg-mark { animation: none; }
+  .reg-mark { opacity: 1; }
+
+  .navbar__links li { opacity: 1; transform: none; }
+}
+
+
+/* 32. ACCESSIBILITY & PERFORMANCE FIXES (UI audit, 2026-09-25) ----------------------- */
+
+/* Screen-reader-only text. The decrypt effect (script.js §6) renders its
+   scrambling glyphs aria-hidden and keeps the real text in one of these,
+   so assistive tech always reads a stable name, never noise. */
+.sr-only {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Gallery pages: the page title is now the <h1>, styled like the h2 it
+   replaced. */
+.section-head h1 {
+  font-size: clamp(2.25rem, 4.2vw, 3.4rem);
+  line-height: 0.98;
+}
+
+/* Contrast: "SYS 01 / 03" sat at 4.46:1 on the card surface. */
+.practice-card__index { color: var(--steel); }
+
+/* Tap targets: every link and control reaches 44px on touch screens. */
+.navbar__mark { min-height: 44px; }
+
+.contact__list a { padding: 10px 0; }
+
+.contact-card__value {
+  display: inline-block;
+  padding: 9px 0;
+}
+
+
+
+@media (max-width: 1199px) {
+  .navbar__links a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+  }
+}
+
+/* The project-hero readout wraps instead of forcing the hero (and its
+   title) wider than a phone screen at the 12px label size. */
+.hero__title-block .telemetry-tag { white-space: normal; }
+
+.project-pager__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding-bottom: 0;
+}
+
+.project-pager__link::after { bottom: 8px; }
+
+/* Desktop ruler: the text was an 11px-tall target. Padding enlarges the
+   hit area; the gap shrinks by the same amount so the rhythm is kept. */
+.ruler ol { gap: 14px; }
+.ruler a { padding: 10px 0; }
+
+/* Cheaper film grain: dropping the overlay blend means each grain step no
+   longer re-blends the whole screen; the look on the ink is the same. */
+.atmosphere__grain {
+  mix-blend-mode: normal;
+  opacity: 0.045;
+}
+
+/* Motion switch (footer, script.js §10): pauses every looping decorative
+   animation site-wide; the choice is remembered. */
+.motion-paused .atmosphere__grain,
+.motion-paused .hero__bg-image,
+.motion-paused .hero__scroll-cue span {
+  animation-play-state: paused;
+}
+
+.motion-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0 14px;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--steel);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.25s, color 0.25s;
+}
+
+.motion-toggle::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: var(--maroon);
+}
+
+.motion-toggle[aria-pressed="true"]::before { background: var(--steel-dim); }
+
+.motion-toggle:hover,
+.motion-toggle:focus-visible {
+  border-color: var(--maroon);
+  color: var(--paper);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Nothing loops under reduced motion, so the switch has nothing to do. */
+  .motion-toggle { display: none; }
+}
+
+
+/* 33. SPEC SHEET ------------------------------------------------------------------ */
+/* Studio system (2026-10-06): ink, Brand Red and Chakra Petch titles, set
+   like a technical spec sheet. Sharp edges (0 / 2px), flat surfaces, no
+   glows, blurs or pill shapes. Galleries are a flush hairline grid where
+   neighbouring cells share one 1px rule. Motion is limited to a 1px rule
+   turning Brand Red and a 1.02 image zoom clipped inside its frame.
+     a. Tokens and typography
+     b. Background (streamlines only, compositor-only)
+     c. Buttons: flat rectangles
+     d. Project cells
+     e. Project gallery: hairline grid
+     f. Frames, forms and lightbox
+     g. Motion switch and reduced motion */
+
+
+/* -- a. Tokens and typography -------------------------------------------------- */
+
+:root {
+  --font-title: 'Chakra Petch', 'Arial', sans-serif;
+  /* Precision edges: form fields keep a 2px machined break, everything
+     else is square. */
+  --radius-sm: 2px;
+  --radius-md: 0;
+  --radius-lg: 0;
+  /* Structural rule shared by neighbouring grid cells. Spec'd as #222,
+     but that vanishes on this ink (1.1:1 against --ink-900), so it is
+     lifted just enough to read as a crisp line. */
+  --hairline: #33373c;
+  /* Quick onset, long settle, zero overshoot. --ease-spring keeps its
+     name for older rules but no longer bounces. */
+  --ease-flow: cubic-bezier(.16, 1, .3, 1);
+  --ease-spring: cubic-bezier(.16, 1, .3, 1);
+  /* Page gutter: wide, so the renders own the page. */
+  --gutter: clamp(24px, 5.5vw, 88px);
+}
+
+/* Headings and project titles use Chakra Petch: squared-off, motorsport-
+   dashboard letterforms (think racing livery and instrument clusters). */
+h1, h2, h3, h4,
+.hero-project-title,
+.contact__email,
+.contact-card__value,
+.storyboard__meta-item h4 {
+  font-family: var(--font-title);
+}
+
+/* Chakra Petch tops out at 700; asking for more would fake-bold it.
+   Display sizes are set tight. */
+h1, h2, h3 { font-weight: 700; letter-spacing: -0.03em; }
+
+h2 { font-size: clamp(1.9rem, 3.4vw, 2.9rem); line-height: 1; }
+h3 { font-size: clamp(1.15rem, 1.8vw, 1.4rem); line-height: 1.12; }
+
+.hero__headline--mega {
+  font-size: clamp(2.6rem, min(7.4vw, 12vh), 8rem);
+  font-weight: 700;
+  line-height: 0.92;
+  letter-spacing: -0.015em;
+}
+
+.section-head__mega { font-size: clamp(2.2rem, 5.6vw, 5.4rem); line-height: 0.95; }
+
+.hero-project-title {
+  font-size: clamp(2rem, 5.6vw, 5rem);
+  font-weight: 700;
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+}
+
+.contact-page__headline { font-size: clamp(2.2rem, 4.8vw, 4.2rem); }
+
+.hero__headline:not(.hero__headline--mega) { font-size: clamp(2rem, 3.8vw, 3.3rem) !important; }
+
+.contact__email {
+  font-size: clamp(1.25rem, 3.4vw, 2.5rem);
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.contact-card__value { font-size: clamp(1.05rem, 1.7vw, 1.35rem); }
+
+.hero__headline--mega,
+.section-head__mega,
+.hero-project-title,
+.drive__title { letter-spacing: -0.03em; }
+
+
+/* -- b. Background ------------------------------------------------------------------ */
+/* Two layers on the fixed .atmosphere (the drifting red light pools were
+   removed in the spec-sheet pass):
+     .atmosphere__grid::before streamlines, gliding right-to-left (70s loop)
+     .atmosphere__grid::after  particle dashes, faster (16s loop)
+   Each strip is one tile wider than the screen and slides by exactly one
+   tile, so the loop is seamless. Transform-only: no repaints. */
+
+.atmosphere__grid {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.atmosphere__grid::before,
+.atmosphere__grid::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  background-repeat: repeat-x;
+  will-change: transform;
+  pointer-events: none;
+}
+
+.atmosphere__grid::before {
+  width: calc(100% + 1600px);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1600' height='900' viewBox='0 0 1600 900' preserveAspectRatio='none'%3E%3Cpath d='M0 40 C200 54 600 26 800 40 C1000 54 1400 26 1600 40' stroke='rgba(236,233,226,0.071)' stroke-width='1' fill='none' vector-effect='non-scaling-stroke'/%3E%3Cpath d='M0 79 C200 49 600 109 800 79 C1000 49 1400 109 1600 79' stroke='rgba(236,233,226,0.06)' stroke-width='1' fill='none' vector-effect='non-scaling-stroke'/%3E%3Cpath d='M0 125 C200 95 600 155 800 125 C1000 95 1400 155 1600 125' stroke='rgba(236,233,226,0.046)' stroke-width='1' fill='none' vector-effect='non-scaling-stroke'/%3E%3Cpath d='M0 184 C200 160 600 208 800 184 C1000 160 1400 208 1600 184' stroke='rgba(236,233,226,0.055)' stroke-width='1' fill='none' vector-effect='non-scaling-stroke'/%3E%3Cpath d='M0 235 C200 211 600 259 800 235 C1000 211 1400 259 1600 235' stroke='rgba(236,233,226,0.078)' stroke-width='1' fill='none' vector-effect='non-scaling-stroke'/%3E%3Cpath d='M0 268 C200 254 600 282 800 268 C1000 254 1400 282 1600 268' stroke='rgba(236,233,226,0.068)' stroke-width='1' fill='none' vector-effect='non-scaling-stroke'/%3E%3Cpath d='M0 324 C200 314 600 334 800 324 C1000 314 1400 334 1600 324' stroke='rgba(235,28,36,0.16)' stroke-width='1' fill='none' vector-effect='non-scaling-stroke'/%3E%3Cpath d='M0 360 C200 330 600 390 800 360 C1000 330 1400 390 1600 360' stroke='rgba(236,233,226,0.057)' stroke-width='1' fill='none' vector-effect='non-scaling-stroke'/%3E%3Cpath d='M0 410 C200 380 600 440 800 410 C1000 380 1400 440 1600 410' stroke='rgba(236,233,226,0.068)' stroke-width='1' fill='none' vector-effect='non-scaling-stroke'/%3E%3Cpath d='M0 470 C200 456 600 484 800 470 C1000 456 1400 484 1600 470' stroke='rgba(236,233,226,0.068)' stroke-width='1' fill='none' vector-effect='non-scaling-stroke'/%3E%3Cpath d='M0 520 C200 534 600 506 800 520 C1000 534 1400 506 1600 520' stroke='rgba(236,233,226,0.049)' stroke-width='1' fill='none' vector-effect='non-scaling-stroke'/%3E%3Cpath d='M0 549 C200 519 600 579 800 549 C1000 519 1400 579 1600 549' stroke='rgba(236,233,226,0.07)' stroke-width='1' fill='none' vector-effect='non-scaling-stroke'/%3E%3Cpath d='M0 609 C200 639 600 579 800 609 C1000 639 1400 579 1600 609' stroke='rgba(235,28,36,0.16)' stroke-width='1' fill='none' vector-effect='non-scaling-stroke'/%3E%3Cpath d='M0 651 C200 675 600 627 800 651 C1000 675 1400 627 1600 651' stroke='rgba(236,233,226,0.059)' stroke-width='1' fill='none' vector-effect='non-scaling-stroke'/%3E%3Cpath d='M0 695 C200 681 600 709 800 695 C1000 681 1400 709 1600 695' stroke='rgba(236,233,226,0.048)' stroke-width='1' fill='none' vector-effect='non-scaling-stroke'/%3E%3Cpath d='M0 744 C200 774 600 714 800 744 C1000 774 1400 714 1600 744' stroke='rgba(236,233,226,0.08)' stroke-width='1' fill='none' vector-effect='non-scaling-stroke'/%3E%3Cpath d='M0 796 C200 778 600 814 800 796 C1000 778 1400 814 1600 796' stroke='rgba(236,233,226,0.05)' stroke-width='1' fill='none' vector-effect='non-scaling-stroke'/%3E%3Cpath d='M0 842 C200 856 600 828 800 842 C1000 856 1400 828 1600 842' stroke='rgba(236,233,226,0.051)' stroke-width='1' fill='none' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+  background-size: 1600px 100%;
+  animation: flow-streams 70s linear infinite;
+}
+
+.atmosphere__grid::after {
+  width: calc(100% + 800px);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='900' viewBox='0 0 800 900' preserveAspectRatio='none'%3E%3Cline x1='0' y1='27' x2='800' y2='27' stroke='rgba(255,90,96,0.113)' stroke-width='1' stroke-dasharray='3 157' stroke-dashoffset='684' vector-effect='non-scaling-stroke'/%3E%3Cline x1='0' y1='54' x2='800' y2='54' stroke='rgba(236,233,226,0.106)' stroke-width='1' stroke-dasharray='24 376' stroke-dashoffset='321' vector-effect='non-scaling-stroke'/%3E%3Cline x1='0' y1='102' x2='800' y2='102' stroke='rgba(236,233,226,0.108)' stroke-width='1' stroke-dasharray='14 186' stroke-dashoffset='593' vector-effect='non-scaling-stroke'/%3E%3Cline x1='0' y1='146' x2='800' y2='146' stroke='rgba(236,233,226,0.127)' stroke-width='1' stroke-dasharray='2 98' stroke-dashoffset='276' vector-effect='non-scaling-stroke'/%3E%3Cline x1='0' y1='187' x2='800' y2='187' stroke='rgba(236,233,226,0.065)' stroke-width='1' stroke-dasharray='2 98' stroke-dashoffset='718' vector-effect='non-scaling-stroke'/%3E%3Cline x1='0' y1='221' x2='800' y2='221' stroke='rgba(236,233,226,0.139)' stroke-width='1' stroke-dasharray='24 376' stroke-dashoffset='456' vector-effect='non-scaling-stroke'/%3E%3Cline x1='0' y1='261' x2='800' y2='261' stroke='rgba(236,233,226,0.131)' stroke-width='1' stroke-dasharray='3 157' stroke-dashoffset='355' vector-effect='non-scaling-stroke'/%3E%3Cline x1='0' y1='292' x2='800' y2='292' stroke='rgba(255,90,96,0.138)' stroke-width='1' stroke-dasharray='3 157' stroke-dashoffset='625' vector-effect='non-scaling-stroke'/%3E%3Cline x1='0' y1='335' x2='800' y2='335' stroke='rgba(236,233,226,0.065)' stroke-width='1' stroke-dasharray='3 157' stroke-dashoffset='786' vector-effect='non-scaling-stroke'/%3E%3Cline x1='0' y1='381' x2='800' y2='381' stroke='rgba(236,233,226,0.119)' stroke-width='1' stroke-dasharray='6 194' stroke-dashoffset='407' vector-effect='non-scaling-stroke'/%3E%3Cline x1='0' y1='424' x2='800' y2='424' stroke='rgba(236,233,226,0.066)' stroke-width='1' stroke-dasharray='3 157' stroke-dashoffset='459' vector-effect='non-scaling-stroke'/%3E%3Cline x1='0' y1='464' x2='800' y2='464' stroke='rgba(236,233,226,0.082)' stroke-width='1' stroke-dasharray='24 376' stroke-dashoffset='140' vector-effect='non-scaling-stroke'/%3E%3Cline x1='0' y1='505' x2='800' y2='505' stroke='rgba(236,233,226,0.082)' stroke-width='1' stroke-dasharray='24 376' stroke-dashoffset='425' vector-effect='non-scaling-stroke'/%3E%3Cline x1='0' y1='543' x2='800' y2='543' stroke='rgba(236,233,226,0.137)' stroke-width='1' stroke-dasharray='3 157' stroke-dashoffset='154' vector-effect='non-scaling-stroke'/%3E%3Cline x1='0' y1='574' x2='800' y2='574' stroke='rgba(255,90,96,0.122)' stroke-width='1' stroke-dasharray='6 194' stroke-dashoffset='674' vector-effect='non-scaling-stroke'/%3E%3Cline x1='0' y1='619' x2='800' y2='619' stroke='rgba(236,233,226,0.099)' stroke-width='1' stroke-dasharray='2 98' stroke-dashoffset='603' vector-effect='non-scaling-stroke'/%3E%3Cline x1='0' y1='657' x2='800' y2='657' stroke='rgba(236,233,226,0.083)' stroke-width='1' stroke-dasharray='14 186' stroke-dashoffset='149' vector-effect='non-scaling-stroke'/%3E%3Cline x1='0' y1='705' x2='800' y2='705' stroke='rgba(236,233,226,0.09)' stroke-width='1' stroke-dasharray='24 376' stroke-dashoffset='579' vector-effect='non-scaling-stroke'/%3E%3Cline x1='0' y1='742' x2='800' y2='742' stroke='rgba(236,233,226,0.115)' stroke-width='1' stroke-dasharray='6 194' stroke-dashoffset='527' vector-effect='non-scaling-stroke'/%3E%3Cline x1='0' y1='773' x2='800' y2='773' stroke='rgba(236,233,226,0.132)' stroke-width='1' stroke-dasharray='3 157' stroke-dashoffset='798' vector-effect='non-scaling-stroke'/%3E%3Cline x1='0' y1='824' x2='800' y2='824' stroke='rgba(236,233,226,0.092)' stroke-width='1' stroke-dasharray='3 157' stroke-dashoffset='106' vector-effect='non-scaling-stroke'/%3E%3Cline x1='0' y1='867' x2='800' y2='867' stroke='rgba(255,90,96,0.115)' stroke-width='1' stroke-dasharray='3 157' stroke-dashoffset='68' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+  background-size: 800px 100%;
+  animation: flow-dust 16s linear infinite;
+}
+
+@keyframes flow-streams { to { transform: translate3d(-1600px, 0, 0); } }
+@keyframes flow-dust    { to { transform: translate3d(-800px, 0, 0); } }
+
+/* Soft falloff so the flow fades toward the screen edges. */
+.atmosphere::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 110% 85% at 50% 45%, transparent 50%, rgba(0, 0, 0, 0.6) 100%);
+}
+
+
+/* -- c. Buttons ------------------------------------------------------------------ */
+/* Flat, square-edged rectangles. Hover changes colour and the 1px rule
+   only: no sweep, no stretch, no press scale. */
+
+.btn {
+  border-radius: 0;
+  padding: 15px 30px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+  border: 1px solid transparent;
+  transition:
+    color 0.3s var(--ease-flow),
+    background-color 0.3s var(--ease-flow),
+    border-color 0.3s var(--ease-flow);
+}
+
+.btn--small { padding: 11px 22px; font-size: 0.86rem; }
+
+.btn::before,
+.btn--ghost::before { content: none; }
+
+/* Primary: Brand Red with black text (4.7:1); hover inverts to bone. */
+.btn--primary { background: var(--maroon); color: #000; border-color: var(--maroon); }
+.btn--primary:hover,
+.btn--primary:focus-visible { background: var(--paper); border-color: var(--paper); color: var(--ink-950); }
+
+/* Ghost: hairline frame; hover turns the rule Brand Red. */
+.btn--ghost { background: transparent; color: var(--paper); border-color: var(--line); }
+.btn--ghost:hover,
+.btn--ghost:focus-visible { color: var(--paper); border-color: var(--maroon); }
+
+
+/* -- d. Project cells ---------------------------------------------------------------- */
+/* Each card is a flat cell in the hairline grid (e). Hover draws a 1px
+   Brand Red rule over the cell's shared edges and zooms the render to
+   1.02, clipped inside its frame. Renders show in full colour. */
+
+.project {
+  position: relative;
+  border-radius: 0;
+  border: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+.project::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: 2;
+  border: 1px solid transparent;
+  pointer-events: none;
+  transition: border-color 0.4s var(--ease-flow);
+}
+
+.project:hover::after,
+.project:focus-within::after,
+a.project:focus-visible::after { border-color: var(--maroon); }
+
+.project__media {
+  position: relative;
+  border-radius: 0;
+  margin: 0;
+  overflow: hidden;
+}
+
+.project__media img {
+  filter: none;
+  transform: scale(1);
+  transform-origin: 50% 50%;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.project:hover .project__media img,
+.project:focus-within .project__media img { transform: scale(1.02); }
+
+.project__body { padding: 26px 28px 30px; }
+
+.project__body h3 {
+  font-size: clamp(1.15rem, 1.6vw, 1.45rem);
+  line-height: 1.1;
+  margin-bottom: 12px;
+}
+
+/* Tags are plain mono text, not badges. */
+.project__tag {
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  color: var(--red-text);
+  letter-spacing: 0.08em;
+}
+
+@media (hover: none) {
+  .project:hover .project__media img { transform: none; }
+}
+
+
+/* -- e. Project gallery: vertical stack --------------------------------------------- */
+/* The gallery pages and the homepage's Selected work share this component
+   (class names still say "drive" from the earlier horizontal version; the
+   markup is unchanged). It is a plain responsive grid you scroll down
+   through: 1 column on phones, 2 on tablets, 3 on desktop, with the lead
+   card spanning two columns where there's room. Cards fade and slide up
+   as they enter from the bottom of the viewport (script.js section 11). */
+
+.drive { position: relative; padding: 0; }
+
+.drive__pin {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(40px, 5vw, 64px);
+  padding: clamp(96px, 12vh, 140px) 0 clamp(96px, 12vh, 140px);
+}
+
+.drive--page .drive__pin { padding-top: clamp(140px, 18vh, 180px); }
+
+.drive__title { font-size: clamp(2rem, 4.6vw, 4.2rem); line-height: 0.98; }
+
+.drive__head .section-head__sub { margin-top: 14px; }
+
+/* Spaced grid: every card is its own framed cell with a clear gap around
+   it (2.5rem on desktop, 1.5rem stacked). In one column the track matches
+   .container's content box. */
+.drive__track {
+  --grid-gap: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-auto-rows: 1fr;
+  gap: var(--grid-gap);
+  max-width: calc(1360px - 2 * var(--gutter));
+  margin: 0 var(--gutter);
+  padding: 0;
+  list-style: none;
+}
+
+/* Strictly two equal cards per row on desktop, one column on mobile.
+   grid-auto-rows: 1fr makes every row as tall as the tallest, so every
+   card in the grid is the same size.
+   The gap must not shrink the cards, so the track grows by exactly the gap
+   plus 1px (each card now draws its own left rule) and takes that from the
+   side margins, half on each side. Cards keep the width (and so the
+   16:10 image height) they had in the flush grid. */
+@media (min-width: 720px) {
+  .drive__track {
+    --grid-gap: 2.5rem;
+    grid-template-columns: repeat(2, 1fr);
+    max-width: calc(1360px - 2 * var(--gutter) + var(--grid-gap) + 1px);
+    margin: 0 calc(var(--gutter) - (var(--grid-gap) + 1px) / 2);
+  }
+}
+
+@media (min-width: 1360px) {
+  .drive__track { margin: 0 auto; }
+}
+
+/* Each card has its own complete 1px frame; hover draws the Brand Red
+   rule over it (.project::after, section 33d). */
+.drive__slide {
+  position: relative;
+  min-width: 0;
+  border: 1px solid var(--hairline);
+}
+
+/* The hovered cell's red rule paints above everything near it. */
+.drive__slide:hover,
+.drive__slide:focus-within { z-index: 1; }
+
+/* The old lead card no longer spans two columns: every card is equal. */
+.drive__slide--wide { grid-column: auto; }
+
+.drive-card { display: flex; flex-direction: column; height: 100%; }
+
+/* Every render sits in the same fixed 16:10 frame (cover-cropped), and the
+   caption below grows to absorb spare row height, so captions line up and
+   all images are the same size. The image is absolutely placed so its
+   intrinsic height never drives the row. */
+.drive-card .project__media,
+.drive__slide--wide .drive-card .project__media { aspect-ratio: 16 / 10; flex: 0 0 auto; min-height: 0; }
+.drive-card .project__media img { position: absolute; inset: 0; }
+
+.drive-card .project__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.drive-card .project__body {
+  position: relative;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.drive-card .project__meta { margin-top: 4px; }
+
+.drive-card .project__body h3 { font-size: clamp(1.1rem, 1.4vw, 1.35rem); }
+
+.drive-card__index {
+  position: absolute;
+  top: 26px;
+  right: 28px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  color: var(--steel-dim);
+}
+
+/* Finish-line tile. */
+.drive-end {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 14px;
+  height: 100%;
+  min-height: 280px;
+  padding: 28px;
+  position: relative;
+}
+
+.drive-end::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border: 1px solid transparent;
+  pointer-events: none;
+  transition: border-color 0.4s var(--ease-flow);
+}
+
+.drive-end:hover::after,
+.drive-end:focus-visible::after { border-color: var(--maroon); }
+
+.drive-end__label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--red-text);
+}
+
+.drive-end__title {
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: clamp(1.4rem, 2vw, 1.9rem);
+  line-height: 1.05;
+  color: var(--paper);
+}
+
+.drive-end__arrow {
+  font-size: 2rem;
+  color: var(--maroon);
+  transition: transform 0.4s var(--ease-flow);
+}
+
+.drive-end:hover .drive-end__arrow,
+.drive-end:focus-visible .drive-end__arrow { transform: translateX(6px); }
+
+/* Scroll reveal: once script.js arms the gallery, each card waits below
+   its resting place and fades / slides up as it enters the viewport from
+   the bottom. --i staggers cards across a row (left to right). Without JS
+   nothing is armed and the cards simply show. */
+.drive__slide {
+  transition:
+    opacity 0.8s var(--ease-flow),
+    translate 1s var(--ease-flow);
+  transition-delay: calc(var(--i, 0) * 90ms);
+}
+
+.drive.is-armed .drive__slide:not(.is-visible) {
+  opacity: 0;
+  translate: 0 48px;
+}
+
+
+
+
+/* -- f. Frames, forms and lightbox ------------------------------------------------ */
+
+.practice-card,
+.contact-card,
+.contact-form { border-radius: 0; }
+
+.form-field input,
+.form-field select,
+.form-field textarea { border-radius: var(--radius-sm); }
+
+/* Native dropdown list follows the dark theme. */
+.form-field select option { background: var(--ink-900); color: var(--paper); }
+
+.about-intro__frame-inner,
+.image-zoom-crop,
+.full-detail-image { border-radius: 0; overflow: hidden; }
+
+.project-details__frame::before { border-radius: 0; padding: 4px 10px; }
+
+.telemetry-tag { letter-spacing: 0.08em; }
+
+/* Lightbox: a flat ink overlay; the render fades in with a plain clip
+   from the top. No capsule, no spring, no blur. */
+.lightbox { background: rgba(10, 10, 10, 0.96); }
+
+.lightbox__image {
+  border-radius: 0;
+  clip-path: inset(0 0 50% 0);
+  opacity: 0;
+  transition:
+    clip-path 0.5s var(--ease-flow) 0.05s,
+    opacity 0.3s var(--ease-flow) 0.05s;
+}
+
+.lightbox.is-open .lightbox__image {
+  clip-path: inset(0 0 0 0);
+  opacity: 1;
+}
+
+.lightbox.is-closing .lightbox__image {
+  opacity: 0;
+  transition-duration: 0.2s;
+  transition-delay: 0s;
+}
+
+.lightbox__frame::before,
+.lightbox__frame::after { display: none; }
+
+.lightbox__hud { background: var(--ink-950); }
+
+.lightbox__close {
+  border-radius: 0;
+  transition: border-color 0.3s var(--ease-flow), color 0.3s var(--ease-flow);
+}
+
+.motion-toggle { border-radius: 0; }
+
+
+/* -- g. Motion switch and reduced motion ------------------------------------------------- */
+
+.motion-paused .atmosphere__grid::before,
+.motion-paused .atmosphere__grid::after { animation-play-state: paused; }
+
+@media (prefers-reduced-motion: reduce) {
+  .atmosphere__grid::before,
+  .atmosphere__grid::after { animation: none; }
+
+  .drive.is-armed .drive__slide,
+  .drive__slide { opacity: 1; translate: 0 0; }
+  .lightbox__image { transition: none; }
+
+  /* Hover keeps the red rule but drops the zoom: with transitions cut to
+     ~0ms (section 16) it would otherwise snap instead of glide. */
+  .project:hover .project__media img,
+  .project:focus-within .project__media img,
+  .practice-card:hover .practice-card__bg img { transform: none; }
+}
+
+
+/* Images that open the lightbox on click (script.js). */
+[data-lightbox],
+.drive__track[data-category="Media"] .project__media img { cursor: zoom-in; }
+
+/* Keep long tags clear of the cell number in the top-right corner. */
+.drive-card .project__tag { margin-right: 40px; }
